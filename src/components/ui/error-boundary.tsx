@@ -46,8 +46,9 @@ const styles = StyleSheet.create({
     padding: 24,
   },
   title: {
-    fontSize: 18,
-    fontFamily: 'Nunito_600SemiBold',
+    fontSize: 22,
+    fontFamily: 'Nunito_800ExtraBold',
+    lineHeight: 28,
     color: lightColors.text,
     marginBottom: 16,
   },
@@ -55,11 +56,14 @@ const styles = StyleSheet.create({
     backgroundColor: lightColors.primary,
     paddingHorizontal: 24,
     paddingVertical: 12,
-    borderRadius: 12,
+    borderRadius: 16,
   },
   buttonText: {
     fontSize: 16,
-    fontFamily: 'Nunito_600SemiBold',
+    fontFamily: 'Nunito_700Bold',
+    lineHeight: 20,
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
     color: '#FFFFFF',
   },
 });

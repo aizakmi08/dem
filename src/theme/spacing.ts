@@ -7,6 +7,8 @@ export const spacing = {
   '2xl': 24,
   '3xl': 32,
   '4xl': 48,
+  '5xl': 56,
+  '6xl': 72,
 } as const;
 
 export type Spacing = typeof spacing;
