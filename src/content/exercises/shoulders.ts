@@ -1,0 +1,268 @@
+import { Exercise } from '../types';
+
+export const shoulderExercises: Exercise[] = [
+  {
+    id: 'shoulder-roll',
+    name: 'Shoulder Roll',
+    difficulty: 'beginner',
+    targetMuscles: ['upper trapezius', 'rhomboids', 'serratus anterior', 'anterior deltoid', 'posterior deltoid'],
+    bodyAreas: ['shoulders', 'upper-back', 'neck'],
+    illustrationFile: 'shoulder-roll.png',
+    illustrationPrompt:
+      'Flat vector illustration of a person standing upright rolling both shoulders slowly in large backward circles with arms relaxed at their sides, warm earthy color palette with cream background, sage green and terracotta accents, minimal clean lines, no text, no shadows, wellness mobile app style, 400x400px',
+    instructions: [
+      'Stand or sit tall with your arms relaxed at your sides and your spine long.',
+      'Inhale and lift both shoulders up toward your ears.',
+      'Roll the shoulders back, squeezing the shoulder blades gently together at the top.',
+      'Drop the shoulders down and slightly forward, completing the circle. This is one backward roll.',
+      'Perform 5–8 slow backward rolls, then reverse direction for 5–8 forward rolls, breathing rhythmically throughout.',
+    ],
+    tips: [
+      'Make the circles as large and slow as possible — small, rushed rolls miss much of the shoulder girdle musculature.',
+      'Prioritize the backward direction to counteract the rounded-shoulder posture common with desk work.',
+      'Let your neck stay long and relaxed; do not let the head bob or the chin jut forward during the roll.',
+    ],
+    modifications: {
+      easier: 'Roll one shoulder at a time if bilateral movement feels awkward, or reduce the range of motion if any area of the roll is painful.',
+      harder: 'Hold a light weight (0.5–1 kg) in each hand to increase the load on the shoulder girdle muscles, or add a 2-second pause at the top of each roll.',
+    },
+    benefits: [
+      'Mobilizes the glenohumeral and scapulothoracic joints through a full arc',
+      'Warms up the rotator cuff muscles before more demanding activity',
+      'Relieves upper trapezius and rhomboid tension from prolonged sitting',
+      'Promotes synovial fluid circulation in the shoulder joint',
+    ],
+    defaultHoldSeconds: 30,
+  },
+  {
+    id: 'cross-body-shoulder-stretch',
+    name: 'Cross-Body Shoulder Stretch',
+    difficulty: 'beginner',
+    targetMuscles: ['posterior deltoid', 'infraspinatus', 'teres minor', 'rhomboids'],
+    bodyAreas: ['shoulders', 'upper-back'],
+    illustrationFile: 'cross-body-shoulder-stretch.png',
+    illustrationPrompt:
+      'Flat vector illustration of a person standing upright pulling one straight arm horizontally across their chest with the opposite hand at the elbow to stretch the back of the shoulder, warm earthy color palette with cream background, sage green and terracotta accents, minimal clean lines, no text, no shadows, wellness mobile app style, 400x400px',
+    instructions: [
+      'Stand or sit with your spine tall and your shoulders relaxed.',
+      'Extend your right arm straight out in front of you at shoulder height.',
+      'Use your left hand to grasp your right arm just above the elbow (not on the joint itself).',
+      'Draw your right arm horizontally across your body toward your left shoulder, keeping it at shoulder height and your right arm straight.',
+      'Hold for 30 seconds, feeling the stretch in the back of the right shoulder, then switch sides.',
+    ],
+    tips: [
+      'Keep the arm being stretched at shoulder height — if it drops below parallel, the stretch shifts away from the posterior deltoid.',
+      'Resist the urge to rotate your torso to pull the arm further; the torso stays square and the stretch comes from the arm crossing the midline.',
+      'Relax the shoulder of the stretching arm down and away from your ear throughout the hold.',
+    ],
+    modifications: {
+      easier: 'Bend the elbow of the stretching arm slightly if a straight-arm hold is uncomfortable, or use a doorframe to hook the arm for a supported stretch.',
+      harder: 'Add a slight forward lean of the torso while maintaining the arm position, or loop a resistance band around the upper arm and anchor it to increase traction on the posterior capsule.',
+    },
+    benefits: [
+      'Stretches the posterior deltoid and rotator cuff external rotators',
+      'Improves horizontal adduction range of motion',
+      'Relieves tightness in the back of the shoulder common after pressing exercises',
+      'Helps address posterior shoulder capsule restrictions',
+    ],
+    defaultHoldSeconds: 30,
+  },
+  {
+    id: 'overhead-tricep-stretch',
+    name: 'Overhead Tricep Stretch',
+    difficulty: 'beginner',
+    targetMuscles: ['triceps brachii', 'posterior deltoid', 'teres major', 'latissimus dorsi'],
+    bodyAreas: ['shoulders', 'upper-back'],
+    illustrationFile: 'overhead-tricep-stretch.png',
+    illustrationPrompt:
+      'Flat vector illustration of a person standing and reaching one arm straight up then bending the elbow to drop the hand behind their head while the opposite hand gently presses on the elbow to deepen the overhead tricep stretch, warm earthy color palette with cream background, sage green and terracotta accents, minimal clean lines, no text, no shadows, wellness mobile app style, 400x400px',
+    instructions: [
+      'Stand or sit tall with your spine long and your core lightly engaged.',
+      'Raise your right arm straight overhead, then bend the elbow so your right hand drops down between your shoulder blades.',
+      'Reach your left hand up and gently grasp your right elbow.',
+      'Apply light downward pressure with your left hand, encouraging your right elbow to point more directly toward the ceiling and deepening the stretch through the tricep and the side of the torso.',
+      'Hold for 30 seconds, breathing steadily, then switch sides.',
+    ],
+    tips: [
+      'Keep your ribcage from flaring — tuck your ribs in slightly to prevent the lower back from over-arching as the arm goes overhead.',
+      'The elbow should point straight up, not out to the side, for maximum tricep elongation.',
+      'Use your assisting hand only to guide and add gentle pressure — do not yank the elbow or force the arm into a deeper position.',
+    ],
+    modifications: {
+      easier: 'Perform the stretch using a towel or strap — hold one end with the upper hand and reach the lower hand behind the back to grasp the other end, then pull down gently.',
+      harder: 'Combine with a slight lateral lean away from the raised arm to add a latissimus dorsi and intercostal stretch to the movement.',
+    },
+    benefits: [
+      'Elongates all three heads of the triceps brachii, especially the long head',
+      'Improves overhead shoulder mobility and glenohumeral flexion',
+      'Stretches the teres major and latissimus dorsi along the side of the torso',
+      'Helps maintain shoulder health for overhead pressing movements',
+    ],
+    defaultHoldSeconds: 30,
+  },
+  {
+    id: 'eagle-arms',
+    name: 'Eagle Arms',
+    difficulty: 'intermediate',
+    targetMuscles: ['rhomboids', 'middle trapezius', 'infraspinatus', 'teres minor', 'posterior deltoid'],
+    bodyAreas: ['shoulders', 'upper-back'],
+    illustrationFile: 'eagle-arms.png',
+    illustrationPrompt:
+      'Flat vector illustration of a person sitting cross-legged with arms crossed at the elbows and forearms wrapping around each other in eagle arm pose with the back of the shoulders visibly stretching apart, warm earthy color palette with cream background, sage green and terracotta accents, minimal clean lines, no text, no shadows, wellness mobile app style, 400x400px',
+    instructions: [
+      'Sit or stand with your spine tall and arms extended in front of you at shoulder height.',
+      'Cross your right arm over your left so the right elbow rests in the crook of the left elbow.',
+      'Bend both elbows and attempt to wrap your forearms around each other until your palms meet, or as close as your flexibility allows.',
+      'Lift your elbows slightly to shoulder height and draw them away from your chest to feel the stretch spread across your upper back and the back of your shoulders.',
+      'Hold for 30 seconds with steady breathing, then unwind and switch sides (left arm over right).',
+    ],
+    tips: [
+      'If your palms do not meet, press the backs of your hands together — the stretch is still effective and the goal is the shoulder-blade separation, not the hand position.',
+      'Lift the elbows — do not let them sag toward your lap, which reduces the rhomboid and posterior shoulder stretch.',
+      'Soften your grip and relax your hands; tension in the hands travels up the forearm and tightens the shoulders.',
+    ],
+    modifications: {
+      easier: 'Simply cross your arms over your chest and give yourself a hug, squeezing the shoulder blades apart, if the full forearm wrap is inaccessible.',
+      harder: 'After holding the static position, add slow upward pulses — lifting the elbows an inch higher and lower — to dynamically work through the posterior shoulder restriction.',
+    },
+    benefits: [
+      'Creates a deep stretch across the rhomboids and middle trapezius by protracting the scapulae',
+      'Opens the posterior shoulder capsule and stretches the infraspinatus',
+      'Improves horizontal adduction and internal rotation range of motion',
+      'Relieves tension between the shoulder blades from typing and mouse use',
+    ],
+    defaultHoldSeconds: 30,
+  },
+  {
+    id: 'reverse-prayer',
+    name: 'Reverse Prayer',
+    difficulty: 'intermediate',
+    targetMuscles: ['anterior deltoid', 'pectoralis minor', 'wrist flexors', 'biceps brachii', 'subscapularis'],
+    bodyAreas: ['shoulders', 'chest'],
+    illustrationFile: 'reverse-prayer.png',
+    illustrationPrompt:
+      'Flat vector illustration of a person sitting upright with both hands placed back-to-back behind their back in reverse prayer position with fingers pointing downward transitioning to pointing upward toward the spine, warm earthy color palette with cream background, sage green and terracotta accents, minimal clean lines, no text, no shadows, wellness mobile app style, 400x400px',
+    instructions: [
+      'Sit or stand with your spine long and your shoulders rolled back.',
+      'Bring both arms behind your back and place the backs of your hands together at the level of your lower back, fingers pointing downward.',
+      'Rotate your wrists inward and press your palms together, working to slide your hands upward along your spine so your fingers point toward the ceiling.',
+      'Draw your elbows gently back and your shoulder blades together to open the chest as you hold the position.',
+      'Hold for 30 seconds with slow, steady breaths, then release gently.',
+    ],
+    tips: [
+      'If your palms do not meet behind your back, keep the backs of the hands pressed together — pressing the hands back-to-back still provides a meaningful forearm and anterior shoulder stretch.',
+      'Do not arch your lower back to compensate — keep a neutral lumbar spine and let the stretch be felt in the shoulders and chest.',
+      'Move into the position slowly; the wrist flexors need time to accommodate the demand of this stretch.',
+    ],
+    modifications: {
+      easier: 'Hold a folded strap or towel between your hands behind your back if your hands do not reach each other, and focus only on squeezing the shoulder blades together.',
+      harder: 'Once the palms are together, work on sliding the hands higher up the spine toward the mid-back, increasing the demand on shoulder internal rotation and wrist flexibility simultaneously.',
+    },
+    benefits: [
+      'Stretches the anterior deltoid and pectoralis minor to open the front of the shoulders',
+      'Improves glenohumeral internal rotation and extension',
+      'Increases wrist flexor flexibility, beneficial for desk workers and climbers',
+      'Strengthens the rhomboids and mid-traps isometrically as they hold the scapulae retracted',
+    ],
+    defaultHoldSeconds: 30,
+  },
+  {
+    id: 'thread-the-needle',
+    name: 'Thread the Needle',
+    difficulty: 'intermediate',
+    targetMuscles: ['rhomboids', 'middle trapezius', 'posterior deltoid', 'thoracic rotators', 'serratus anterior'],
+    bodyAreas: ['shoulders', 'upper-back'],
+    illustrationFile: 'thread-the-needle.png',
+    illustrationPrompt:
+      'Flat vector illustration of a person in a tabletop position on hands and knees sliding one arm along the floor beneath their body to thread it through to the opposite side, with the shoulder and cheek dropping toward the floor in a deep spinal rotation stretch, warm earthy color palette with cream background, sage green and terracotta accents, minimal clean lines, no text, no shadows, wellness mobile app style, 400x400px',
+    instructions: [
+      'Begin in a tabletop position on your hands and knees with your wrists under your shoulders and your knees under your hips.',
+      'Inhale to prepare, then exhale and slide your right arm along the floor underneath your left arm, palm facing up, threading it through to the left side.',
+      'Allow your right shoulder and the right side of your head to lower gently toward the floor. Your left arm should remain extended and supporting.',
+      'Hold the position for 30 seconds, breathing into the back of the right shoulder and feeling the rotation through your upper back.',
+      'Walk your right hand back out, return to tabletop, and repeat on the other side.',
+    ],
+    tips: [
+      'Keep your hips stacked directly over your knees and level — do not let the hips rotate or shift to the side, as the stretch should come from thoracic rotation, not hip compensation.',
+      'The supporting arm can extend further forward to increase the side-body and shoulder stretch, or stay bent if overhead mobility is limited.',
+      'Breathe into the upper back and ribs to encourage the thoracic spine to open on each exhale.',
+    ],
+    modifications: {
+      easier: 'Place a folded blanket under the shoulder and side of the head for cushioning if the floor is uncomfortable, or reduce the depth of the thread so the shoulder does not fully reach the floor.',
+      harder: 'Reach the top (supporting) arm up toward the ceiling in a thoracic rotation, holding for a breath before returning it to the floor, to add a dynamic rotation component.',
+    },
+    benefits: [
+      'Mobilizes the thoracic spine in rotation, which directly relieves shoulder and upper-back tension',
+      'Stretches the posterior shoulder capsule and rhomboids in a loaded, gravity-assisted position',
+      'Counteracts the spinal stiffness that restricts shoulder range of motion',
+      'Calming and restorative; reduces cortisol-driven postural tension',
+    ],
+    defaultHoldSeconds: 30,
+  },
+  {
+    id: 'arm-circles',
+    name: 'Arm Circles',
+    difficulty: 'beginner',
+    targetMuscles: ['deltoids', 'rotator cuff', 'pectoralis major', 'serratus anterior', 'upper trapezius'],
+    bodyAreas: ['shoulders'],
+    illustrationFile: 'arm-circles.png',
+    illustrationPrompt:
+      'Flat vector illustration of a person standing with both arms extended out to their sides at shoulder height tracing large smooth circles in the air to warm up the shoulder joints, warm earthy color palette with cream background, sage green and terracotta accents, minimal clean lines, no text, no shadows, wellness mobile app style, 400x400px',
+    instructions: [
+      'Stand with your feet hip-width apart, spine tall, and arms extended out to your sides at shoulder height, palms facing down.',
+      'Begin making small forward circles with both arms simultaneously, gradually increasing the size of the circles over 10–15 seconds until your arms are tracing the largest circles possible.',
+      'Complete 10 large forward circles, then gradually shrink the circles back down and stop.',
+      'Reverse direction, building from small to large backward circles for another 10 repetitions, then shrink down again.',
+      'Keep a steady, rhythmic pace throughout — not so fast that momentum takes over, not so slow that the muscles fatigue prematurely.',
+    ],
+    tips: [
+      'Keep the arms fully extended and at shoulder height throughout — arms that drop below parallel reduce the effectiveness of the deltoid warm-up.',
+      'Rotate your thumbs upward during backward circles (supinated) and downward during forward circles (pronated) to vary the rotator cuff recruitment.',
+      'Keep your core engaged to prevent the lower back from swaying as the arms move.',
+    ],
+    modifications: {
+      easier: 'Perform one arm at a time if bilateral arm circles cause neck tension or loss of form, resting the uninvolved hand on your hip.',
+      harder: 'Hold light dumbbells (0.5–1 kg) to increase the shoulder endurance demand, or perform the circles with the arms angled forward at 30 degrees (scapular plane) for deeper rotator cuff activation.',
+    },
+    benefits: [
+      'Warms up all three heads of the deltoid through circumduction',
+      'Activates the rotator cuff dynamically to prepare the shoulder for loaded movement',
+      'Increases blood flow to the glenohumeral joint and surrounding soft tissue',
+      'Improves shoulder proprioception and neuromuscular coordination',
+    ],
+    defaultHoldSeconds: 30,
+  },
+  {
+    id: 'doorway-chest-shoulder-stretch',
+    name: 'Doorway Chest & Shoulder Stretch',
+    difficulty: 'beginner',
+    targetMuscles: ['pectoralis major', 'pectoralis minor', 'anterior deltoid', 'coracobrachialis', 'biceps brachii'],
+    bodyAreas: ['shoulders', 'chest'],
+    illustrationFile: 'doorway-chest-shoulder-stretch.png',
+    illustrationPrompt:
+      'Flat vector illustration of a person standing in a doorway with both forearms resting on the door frame at 90 degrees and leaning their chest gently forward through the opening to stretch the chest and front of the shoulders, warm earthy color palette with cream background, sage green and terracotta accents, minimal clean lines, no text, no shadows, wellness mobile app style, 400x400px',
+    instructions: [
+      'Stand in a doorway and raise both arms so your upper arms are parallel to the floor and your elbows are bent to 90 degrees, forearms resting vertically on the door frame.',
+      'Step one foot forward through the doorway to create a stable staggered stance.',
+      'Keeping your forearms in contact with the frame, gently lean your chest forward through the opening until you feel a stretch across the front of your chest and the front of your shoulders.',
+      'Hold for 30 seconds, breathing deeply and allowing the pectorals to lengthen with each exhale.',
+      'Step back to the starting position to release. For a variation, raise the arms to different heights (low at 45°, mid at 90°, high at 120°) to target different portions of the pectoral muscle.',
+    ],
+    tips: [
+      'Do not let your lower back arch excessively as you lean forward — engage your core lightly and keep the pelvis neutral.',
+      'The stretch should be felt across the chest, not in the front of the shoulder joint itself; if you feel a sharp pinch in the shoulder, raise or lower your arm position on the frame.',
+      'Keep your shoulder blades drawing together and down as you lean, rather than letting the shoulders round forward.',
+    ],
+    modifications: {
+      easier: 'Stretch one arm at a time, placing a single forearm on the door frame and rotating your torso away from it, which allows you to control the intensity more easily.',
+      harder: 'Raise the arms higher on the frame (above 90 degrees) to target the lower pectorals more intensely, or add a slow walk-in step to dynamically increase the stretch depth.',
+    },
+    benefits: [
+      'Stretches the pectoralis major across all fiber directions when arms are varied in height',
+      'Opens the anterior shoulder capsule and stretches the anterior deltoid',
+      'Directly counters the hunched, internally rotated posture of desk workers',
+      'Improves thoracic extension and rib cage expansion for better breathing capacity',
+    ],
+    defaultHoldSeconds: 30,
+  },
+];

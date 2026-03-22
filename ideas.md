@@ -1,0 +1,4 @@
+- community of users who see each others progress and can motivate each other to keep going
+  - add bonus points if you help someone else motivate
+- add referral system with bonuses
+- add a leaderboard
