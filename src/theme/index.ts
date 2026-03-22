@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useSettingsStore } from '@/stores/use-settings-store';
 import { lightColors, darkColors, type ColorTokens } from './colors';
 import { typography, type Typography } from './typography';
@@ -15,15 +16,17 @@ export interface Theme {
 
 export function useTheme(): Theme {
   const theme = useSettingsStore((s) => s.theme);
-  const colors = theme === 'dark' ? darkColors : lightColors;
 
-  return {
-    colors,
-    typography,
-    spacing,
-    radius,
-    components: createComponentTokens(colors, radius, spacing),
-  };
+  return useMemo(() => {
+    const colors = theme === 'dark' ? darkColors : lightColors;
+    return {
+      colors,
+      typography,
+      spacing,
+      radius,
+      components: createComponentTokens(colors, radius, spacing),
+    };
+  }, [theme]);
 }
 
 export { lightColors, darkColors } from './colors';

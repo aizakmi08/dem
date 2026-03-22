@@ -1,23 +1,5 @@
-import { View, Text, StyleSheet } from 'react-native';
-import { useTheme } from '@/theme';
+import { Redirect } from 'expo-router';
 
-export default function HomeScreen() {
-  const { colors, typography, spacing } = useTheme();
-
-  return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <Text style={[typography.display, { color: colors.text }]}>Dem</Text>
-      <Text style={[typography.body, { color: colors.primary, marginTop: spacing.sm }]}>
-        Daily Stretching
-      </Text>
-    </View>
-  );
+export default function Index() {
+  return <Redirect href="/(auth)/sign-in" />;
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
