@@ -64,7 +64,7 @@ export default function EducationScreen() {
     if (currentIndex < SLIDES.length - 1) {
       scrollRef.current?.scrollTo({ x: (currentIndex + 1) * width, animated: true });
     } else {
-      // TODO: Navigate to next onboarding step
+      router.push('/(onboarding)/age-picker');
     }
   }, [currentIndex, width]);
 
