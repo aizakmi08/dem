@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback } from 'react';
 import { View, Text, ScrollView, FlatList, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@/theme';
 import { preBuiltRoutines } from '@/content/routines';
@@ -19,6 +20,7 @@ const favoriteRoutines = preBuiltRoutines.filter((r) =>
 const ITEM_HEIGHT = 76 + 10; // row height + gap
 
 export default function ExploreScreen() {
+  const router = useRouter();
   const insets = useSafeAreaInsets();
   const { colors, typography } = useTheme();
   const [searchQuery, setSearchQuery] = useState('');
@@ -30,13 +32,22 @@ export default function ExploreScreen() {
     return preBuiltRoutines.filter((r) => r.name.toLowerCase().includes(q));
   }, [searchQuery]);
 
+  const handleRoutinePress = useCallback(
+    (id: string) => router.push(`/routine/${id}`),
+    [router]
+  );
+
   const renderRoutineRow = useCallback(
     ({ item, index }: { item: Routine; index: number }) => (
       <View style={styles.routineRowWrapper}>
-        <RoutineListRow routine={item} index={index} />
+        <RoutineListRow
+          routine={item}
+          index={index}
+          onPress={() => handleRoutinePress(item.id)}
+        />
       </View>
     ),
-    []
+    [handleRoutinePress]
   );
 
   const keyExtractor = useCallback((item: Routine) => item.id, []);

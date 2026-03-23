@@ -3,15 +3,12 @@ import { Svg, Path } from 'react-native-svg';
 import { useTheme } from '@/theme';
 import { decorativePalette } from '@/theme/palette';
 import type { Routine } from '@/content/types';
+import { capitalize } from '@/lib/utils';
 
 interface RoutineListRowProps {
   routine: Routine;
   index: number;
   onPress?: () => void;
-}
-
-function capitalize(s: string) {
-  return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
 export function RoutineListRow({ routine, index, onPress }: RoutineListRowProps) {
