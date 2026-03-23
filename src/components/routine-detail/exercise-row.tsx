@@ -1,6 +1,7 @@
 import { memo, useCallback } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useTheme } from '@/theme';
+import { formatSeconds } from '@/lib/utils';
 import { decorativePalette } from '@/theme/palette';
 
 interface ExerciseRowProps {
@@ -11,12 +12,6 @@ interface ExerciseRowProps {
   onPress: (exerciseId: string) => void;
   onDecrease: (exerciseId: string) => void;
   onIncrease: (exerciseId: string) => void;
-}
-
-function formatTime(seconds: number): string {
-  const mins = Math.floor(seconds / 60);
-  const secs = seconds % 60;
-  return `${mins}:${secs.toString().padStart(2, '0')}`;
 }
 
 export const ExerciseRow = memo(function ExerciseRow({
@@ -64,7 +59,7 @@ export const ExerciseRow = memo(function ExerciseRow({
         </Pressable>
 
         <Text style={[typography.label, styles.time, { color: colors.text }]}>
-          {formatTime(holdSeconds)}
+          {formatSeconds(holdSeconds)}
         </Text>
 
         <Pressable

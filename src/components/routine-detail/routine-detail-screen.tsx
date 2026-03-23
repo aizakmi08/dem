@@ -7,6 +7,7 @@ import { useTheme } from '@/theme';
 import { getExerciseById } from '@/content/exercises';
 import type { Routine } from '@/content/types';
 import { capitalize } from '@/lib/utils';
+import { usePlayerStore } from '@/stores/use-player-store';
 import { RoutineDetailHeader } from './routine-detail-header';
 import { ExerciseRow } from './exercise-row';
 import { ExerciseInfoModal } from './exercise-info-modal';
@@ -80,8 +81,9 @@ export function RoutineDetailScreen({ routine }: RoutineDetailScreenProps) {
   }, []);
 
   const handleStart = useCallback(() => {
-    Alert.alert('Coming soon', 'Exercise player is not yet implemented');
-  }, []);
+    usePlayerStore.getState().initSession(routine.id, holdTimes, routine.exercises);
+    router.push(`/player/${routine.id}`);
+  }, [routine, holdTimes, router]);
 
   const handleShare = useCallback(() => {
     Alert.alert('Coming soon', 'Sharing is not yet implemented');
