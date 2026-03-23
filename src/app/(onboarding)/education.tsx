@@ -3,11 +3,11 @@ import {
   View,
   Text,
   Pressable,
-  FlatList,
+  ScrollView,
   useWindowDimensions,
   StyleSheet,
-  type ViewToken,
-  type ListRenderItemInfo,
+  type NativeSyntheticEvent,
+  type NativeScrollEvent,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -20,28 +20,24 @@ import {
   ProgressIllustration,
 } from '@/components/onboarding/education-illustrations';
 
-type Slide = {
-  id: string;
+type SlideData = {
   title: string;
   subtitle: string;
   Illustration: React.ComponentType;
 };
 
-const SLIDES: Slide[] = [
+const SLIDES: SlideData[] = [
   {
-    id: '1',
     title: 'Stretching is important.',
     subtitle: 'Every time you stretch, you invest in your long-term health and longevity.',
     Illustration: StretchIllustration,
   },
   {
-    id: '2',
     title: 'Consistency is key.',
     subtitle: 'Just a few minutes each day can improve your flexibility and reduce tension.',
     Illustration: ConsistencyIllustration,
   },
   {
-    id: '3',
     title: 'Track your progress.',
     subtitle: 'Build a streak, see your improvement, and stay motivated on your journey.',
     Illustration: ProgressIllustration,
@@ -53,45 +49,24 @@ export default function EducationScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { width } = useWindowDimensions();
-  const flatListRef = useRef<FlatList<Slide>>(null);
+  const scrollRef = useRef<ScrollView>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [slideHeight, setSlideHeight] = useState(0);
 
-  const onViewableItemsChanged = useCallback(
-    ({ viewableItems }: { viewableItems: ViewToken<Slide>[] }) => {
-      if (viewableItems.length > 0 && viewableItems[0].index != null) {
-        setCurrentIndex(viewableItems[0].index);
-      }
+  const onScroll = useCallback(
+    (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+      const index = Math.round(e.nativeEvent.contentOffset.x / width);
+      setCurrentIndex(index);
     },
-    [],
+    [width],
   );
-
-  const viewabilityConfig = useRef({ viewAreaCoveragePercentThreshold: 50 }).current;
 
   const handleTap = useCallback(() => {
     if (currentIndex < SLIDES.length - 1) {
-      flatListRef.current?.scrollToIndex({ index: currentIndex + 1, animated: true });
+      scrollRef.current?.scrollTo({ x: (currentIndex + 1) * width, animated: true });
     } else {
       // TODO: Navigate to next onboarding step
     }
-  }, [currentIndex]);
-
-  const renderSlide = useCallback(
-    ({ item }: ListRenderItemInfo<Slide>) => (
-      <View style={[styles.slide, { width, height: slideHeight }]}>
-        <View style={[styles.illustrationCircle, { backgroundColor: colors.primary }]}>
-          <item.Illustration />
-        </View>
-        <View style={[styles.textSection, { paddingTop: spacing['3xl'], paddingHorizontal: spacing['4xl'], gap: spacing.md }]}>
-          <Text style={[typography.title, { color: colors.text, textAlign: 'center', lineHeight: 34 }]}>
-            {item.title}
-          </Text>
-          <Text style={[styles.subtitle, { color: colors.textSecondary }]}>{item.subtitle}</Text>
-        </View>
-      </View>
-    ),
-    [width, slideHeight, colors, typography, spacing],
-  );
+  }, [currentIndex, width]);
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -99,7 +74,7 @@ export default function EducationScreen() {
         <BackButton
           onPress={() => {
             if (currentIndex > 0) {
-              flatListRef.current?.scrollToIndex({ index: currentIndex - 1, animated: true });
+              scrollRef.current?.scrollTo({ x: (currentIndex - 1) * width, animated: true });
             } else {
               router.back();
             }
@@ -107,29 +82,38 @@ export default function EducationScreen() {
         />
       </View>
 
-      <View
-        style={styles.flatListWrapper}
-        onLayout={(e) => setSlideHeight(e.nativeEvent.layout.height)}
+      <View style={styles.spacer} />
+
+      <ScrollView
+        ref={scrollRef}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        bounces={false}
+        onScroll={onScroll}
+        scrollEventThrottle={16}
+        style={{ flexGrow: 0, width }}
       >
-        {slideHeight > 0 && (
-          <FlatList
-            ref={flatListRef}
-            data={SLIDES}
-            renderItem={renderSlide}
-            keyExtractor={(item) => item.id}
-            horizontal
-            pagingEnabled
-            showsHorizontalScrollIndicator={false}
-            bounces={false}
-            onViewableItemsChanged={onViewableItemsChanged}
-            viewabilityConfig={viewabilityConfig}
-          />
-        )}
-      </View>
+        {SLIDES.map((slide, i) => (
+          <View key={i} style={[styles.slide, { width }]}>
+            <View style={[styles.illustrationCircle, { backgroundColor: colors.primary }]}>
+              <slide.Illustration />
+            </View>
+            <View style={[styles.textSection, { paddingTop: spacing['3xl'], paddingHorizontal: spacing['4xl'], gap: spacing.md }]}>
+              <Text style={[typography.title, { color: colors.text, textAlign: 'center', lineHeight: 34 }]}>
+                {slide.title}
+              </Text>
+              <Text style={[styles.subtitle, { color: colors.textSecondary }]}>{slide.subtitle}</Text>
+            </View>
+          </View>
+        ))}
+      </ScrollView>
 
       <View style={{ paddingTop: spacing['3xl'] }}>
         <PageDots total={SLIDES.length} current={currentIndex} />
       </View>
+
+      <View style={styles.spacer} />
 
       <Pressable
         onPress={handleTap}
@@ -149,13 +133,11 @@ const styles = StyleSheet.create({
   header: {
     width: '100%',
   },
-  flatListWrapper: {
+  spacer: {
     flex: 1,
-    width: '100%',
   },
   slide: {
     alignItems: 'center',
-    justifyContent: 'center',
   },
   illustrationCircle: {
     width: 140,
