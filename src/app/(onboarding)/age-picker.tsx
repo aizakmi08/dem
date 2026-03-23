@@ -13,8 +13,9 @@ export default function AgePickerScreen() {
   const [selectedAge, setSelectedAge] = useState(23);
 
   const handleNext = useCallback(() => {
-    // TODO: Save selectedAge and navigate to next onboarding step
-  }, [selectedAge]);
+    // TODO: Save selectedAge
+    router.push('/(onboarding)/gender-picker');
+  }, [selectedAge, router]);
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
