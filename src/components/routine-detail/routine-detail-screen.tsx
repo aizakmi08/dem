@@ -9,6 +9,7 @@ import type { Routine } from '@/content/types';
 import { capitalize } from '@/lib/utils';
 import { RoutineDetailHeader } from './routine-detail-header';
 import { ExerciseRow } from './exercise-row';
+import { ExerciseInfoModal } from './exercise-info-modal';
 
 const HOLD_STEP = 5;
 const HOLD_MIN = 5;
@@ -32,6 +33,13 @@ export function RoutineDetailScreen({ routine }: RoutineDetailScreenProps) {
     Object.fromEntries(routine.exercises.map((e) => [e.exerciseId, e.holdSeconds]))
   );
 
+  const [selectedExerciseId, setSelectedExerciseId] = useState<string | null>(null);
+
+  const selectedExercise = useMemo(
+    () => (selectedExerciseId ? getExerciseById(selectedExerciseId) ?? null : null),
+    [selectedExerciseId]
+  );
+
   const exerciseItems = useMemo<ExerciseItem[]>(
     () =>
       [...routine.exercises]
@@ -47,6 +55,14 @@ export function RoutineDetailScreen({ routine }: RoutineDetailScreenProps) {
 
   const handleMenu = useCallback(() => {
     Alert.alert('Menu', 'Options coming soon');
+  }, []);
+
+  const handleExercisePress = useCallback((exerciseId: string) => {
+    setSelectedExerciseId(exerciseId);
+  }, []);
+
+  const handleModalClose = useCallback(() => {
+    setSelectedExerciseId(null);
   }, []);
 
   const handleDecrease = useCallback((exerciseId: string) => {
@@ -80,11 +96,12 @@ export function RoutineDetailScreen({ routine }: RoutineDetailScreenProps) {
         exerciseName={item.name}
         holdSeconds={holdTimes[item.exerciseId] ?? 30}
         colorIndex={index}
+        onPress={handleExercisePress}
         onDecrease={handleDecrease}
         onIncrease={handleIncrease}
       />
     ),
-    [holdTimes, handleDecrease, handleIncrease]
+    [holdTimes, handleExercisePress, handleDecrease, handleIncrease]
   );
 
   const listHeader = useMemo(
@@ -185,6 +202,12 @@ export function RoutineDetailScreen({ routine }: RoutineDetailScreenProps) {
           <Text style={[typography.button, { color: colors.white }]}>Start</Text>
         </Pressable>
       </View>
+
+      <ExerciseInfoModal
+        exercise={selectedExercise}
+        visible={selectedExercise !== null}
+        onClose={handleModalClose}
+      />
     </View>
   );
 }

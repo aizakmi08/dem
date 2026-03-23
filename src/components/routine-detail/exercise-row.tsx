@@ -8,6 +8,7 @@ interface ExerciseRowProps {
   exerciseName: string;
   holdSeconds: number;
   colorIndex: number;
+  onPress: (exerciseId: string) => void;
   onDecrease: (exerciseId: string) => void;
   onIncrease: (exerciseId: string) => void;
 }
@@ -23,26 +24,32 @@ export const ExerciseRow = memo(function ExerciseRow({
   exerciseName,
   holdSeconds,
   colorIndex,
+  onPress,
   onDecrease,
   onIncrease,
 }: ExerciseRowProps) {
   const { colors, typography } = useTheme();
 
+  const handlePress = useCallback(() => onPress(exerciseId), [exerciseId, onPress]);
   const handleDecrease = useCallback(() => onDecrease(exerciseId), [exerciseId, onDecrease]);
   const handleIncrease = useCallback(() => onIncrease(exerciseId), [exerciseId, onIncrease]);
 
   return (
     <View style={styles.row}>
-      <View
-        style={[
-          styles.circle,
-          { backgroundColor: decorativePalette[colorIndex % decorativePalette.length] },
-        ]}
-      />
-
-      <Text style={[typography.bodyMedium, styles.name, { color: colors.text }]} numberOfLines={2}>
-        {exerciseName}
-      </Text>
+      <Pressable
+        onPress={handlePress}
+        style={({ pressed }) => [styles.rowLeft, { opacity: pressed ? 0.7 : 1 }]}
+      >
+        <View
+          style={[
+            styles.circle,
+            { backgroundColor: decorativePalette[colorIndex % decorativePalette.length] },
+          ]}
+        />
+        <Text style={[typography.bodyMedium, styles.name, { color: colors.text }]} numberOfLines={2}>
+          {exerciseName}
+        </Text>
+      </Pressable>
 
       <View style={styles.stepper}>
         <Pressable
@@ -80,6 +87,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 14,
+    gap: 14,
+  },
+  rowLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
     gap: 14,
   },
   circle: {
