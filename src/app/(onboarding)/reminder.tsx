@@ -4,19 +4,36 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useTheme } from '@/theme';
 import { BackButton } from '@/components/ui/back-button';
-import { AgeScrollPicker } from '@/components/onboarding/age-scroll-picker';
-import { useOnboardingStore } from '@/stores/use-onboarding-store';
+import { TimeScrollPicker } from '@/components/onboarding/time-scroll-picker';
+import { useOnboardingStore, type Period } from '@/stores/use-onboarding-store';
 
-export default function AgePickerScreen() {
+export default function ReminderScreen() {
   const { colors, typography, spacing, radius } = useTheme();
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const [selectedAge, setSelectedAge] = useState(23);
+
+  const [hour, setHour] = useState(9);
+  const [minute, setMinute] = useState(0);
+  const [period, setPeriod] = useState<Period>('AM');
+
+  const handleTimeChange = useCallback(
+    (h: number, m: number, p: Period) => {
+      setHour(h);
+      setMinute(m);
+      setPeriod(p);
+    },
+    [],
+  );
 
   const handleNext = useCallback(() => {
-    useOnboardingStore.getState().setAge(selectedAge);
-    router.push('/(onboarding)/gender-picker');
-  }, [selectedAge, router]);
+    useOnboardingStore.getState().setReminder(hour, minute, period);
+    router.replace('/');
+  }, [hour, minute, period, router]);
+
+  const handleSkip = useCallback(() => {
+    useOnboardingStore.getState().skipReminder();
+    router.replace('/');
+  }, [router]);
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -29,33 +46,42 @@ export default function AgePickerScreen() {
         <BackButton onPress={() => router.back()} />
       </View>
 
-      <View style={[styles.titleSection, { gap: spacing.sm, paddingTop: spacing.lg }]}>
+      <View style={[styles.titleSection, { paddingTop: spacing['2xl'], gap: spacing.sm }]}>
         <Text style={[typography.title, { color: colors.text, textAlign: 'center' }]}>
-          How old are you?
+          Set your daily reminder to stretch every day.
         </Text>
         <Text style={[typography.bodySmall, { color: colors.textSecondary, textAlign: 'center' }]}>
-          Choose an option to continue
+          Choose a time below
         </Text>
       </View>
 
       <View style={styles.spacer} />
 
-      <AgeScrollPicker defaultAge={23} onAgeChange={setSelectedAge} />
-
-      <View style={{ paddingTop: spacing['3xl'], paddingHorizontal: spacing['3xl'] }}>
-        <Text style={[typography.body, { color: colors.text }]}>
-          Tip: This will be used to optimize your exercises and routines.
-        </Text>
-      </View>
+      <TimeScrollPicker
+        defaultHour={9}
+        defaultMinute={0}
+        defaultPeriod="AM"
+        onTimeChange={handleTimeChange}
+      />
 
       <View style={styles.spacer} />
 
       <View
         style={[
           styles.buttonSection,
-          { paddingHorizontal: spacing['2xl'], paddingBottom: insets.bottom + spacing['2xl'] },
+          {
+            paddingHorizontal: spacing['2xl'],
+            paddingBottom: insets.bottom + spacing['2xl'],
+            gap: spacing.lg,
+          },
         ]}
       >
+        <Pressable onPress={handleSkip} style={styles.skipButton}>
+          <Text style={[typography.overline, { color: colors.textSecondary }]}>
+            Skip reminder
+          </Text>
+        </Pressable>
+
         <Pressable
           onPress={handleNext}
           style={({ pressed }) => [
@@ -83,16 +109,23 @@ const styles = StyleSheet.create({
   },
   titleSection: {
     alignItems: 'center',
+    paddingHorizontal: 48,
   },
   spacer: {
     flex: 1,
   },
+  skipButton: {
+    alignItems: 'center',
+    paddingVertical: 8,
+  },
   buttonSection: {
     width: '100%',
+    alignItems: 'center',
   },
   nextButton: {
     height: 56,
     alignItems: 'center',
     justifyContent: 'center',
+    width: '100%',
   },
 });

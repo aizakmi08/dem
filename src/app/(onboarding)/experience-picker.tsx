@@ -3,28 +3,54 @@ import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import Animated, { FadeInDown } from 'react-native-reanimated';
+import Svg, { Circle } from 'react-native-svg';
 import { useTheme } from '@/theme';
 import { BackButton } from '@/components/ui/back-button';
 import { SelectOption } from '@/components/onboarding/select-option';
-import { useOnboardingStore, type Gender } from '@/stores/use-onboarding-store';
+import { useOnboardingStore, type ExperienceLevel } from '@/stores/use-onboarding-store';
 
-const GENDER_OPTIONS: { value: Gender; label: string }[] = [
-  { value: 'male', label: 'Male' },
-  { value: 'female', label: 'Female' },
-  { value: 'prefer_not_to_say', label: 'Prefer not to say' },
+const EXPERIENCE_OPTIONS: {
+  value: ExperienceLevel;
+  label: string;
+  subtitle: string;
+  dotCount: number;
+}[] = [
+  { value: 'beginner', label: 'Beginner', subtitle: 'New to stretching', dotCount: 1 },
+  { value: 'intermediate', label: 'Intermediate', subtitle: 'Some stretching experience', dotCount: 2 },
+  { value: 'expert', label: 'Expert', subtitle: 'I stretch regularly', dotCount: 3 },
 ];
 
-export default function GenderPickerScreen() {
+function DotIcon({ count, color }: { count: number; color: string }) {
+  const size = 8;
+  const gap = 4;
+  const totalWidth = count * size + (count - 1) * gap;
+
+  return (
+    <Svg width={totalWidth} height={size}>
+      {Array.from({ length: count }, (_, i) => (
+        <Circle
+          key={i}
+          cx={i * (size + gap) + size / 2}
+          cy={size / 2}
+          r={size / 2}
+          fill={color}
+        />
+      ))}
+    </Svg>
+  );
+}
+
+export default function ExperiencePickerScreen() {
   const { colors, typography, spacing, radius } = useTheme();
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const [selectedGender, setSelectedGender] = useState<Gender | null>(null);
+  const [selected, setSelected] = useState<ExperienceLevel | null>(null);
 
   const handleNext = useCallback(() => {
-    if (!selectedGender) return;
-    useOnboardingStore.getState().setGender(selectedGender);
-    router.push('/(onboarding)/experience-picker');
-  }, [selectedGender, router]);
+    if (!selected) return;
+    useOnboardingStore.getState().setExperience(selected);
+    router.push('/(onboarding)/goals-picker');
+  }, [selected, router]);
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -39,7 +65,7 @@ export default function GenderPickerScreen() {
 
       <View style={[styles.titleSection, { paddingTop: spacing['2xl'], gap: spacing.sm }]}>
         <Text style={[typography.title, { color: colors.text, textAlign: 'center' }]}>
-          What is your gender?
+          How much experience do you have stretching?
         </Text>
         <Text style={[typography.bodySmall, { color: colors.textSecondary, textAlign: 'center' }]}>
           Choose an option to continue
@@ -49,40 +75,36 @@ export default function GenderPickerScreen() {
       <View
         style={[
           styles.options,
-          {
-            paddingTop: spacing['4xl'],
-            paddingHorizontal: spacing['2xl'],
-            gap: spacing.md,
-          },
+          { paddingTop: spacing['4xl'], paddingHorizontal: spacing['2xl'], gap: spacing.md },
         ]}
       >
-        {GENDER_OPTIONS.map((option) => (
+        {EXPERIENCE_OPTIONS.map((option) => (
           <SelectOption
             key={option.value}
-            isSelected={selectedGender === option.value}
-            onPress={() => setSelectedGender(option.value)}
-            height={60}
+            isSelected={selected === option.value}
+            onPress={() => setSelected(option.value)}
+            height={72}
             borderRadius={radius.xl}
             colors={colors}
           >
-            <Text
-              style={[
-                styles.optionText,
-                {
-                  color: selectedGender === option.value ? colors.accent : colors.text,
-                  fontFamily: 'Nunito_600SemiBold',
-                },
-              ]}
-            >
-              {option.label}
-            </Text>
+            <View style={[styles.iconContainer, { backgroundColor: colors.background, borderRadius: radius.full }]}>
+              <DotIcon count={option.dotCount} color={colors.primary} />
+            </View>
+            <View style={[styles.textContainer, { gap: 2 }]}>
+              <Text style={[styles.optionLabel, { color: colors.text, fontFamily: 'Nunito_600SemiBold' }]}>
+                {option.label}
+              </Text>
+              <Text style={[typography.bodySmall, { color: colors.textSecondary }]}>
+                {option.subtitle}
+              </Text>
+            </View>
           </SelectOption>
         ))}
       </View>
 
       <View style={styles.spacer} />
 
-      {selectedGender ? (
+      {selected ? (
         <Animated.View
           entering={FadeInDown.duration(300)}
           style={[
@@ -123,6 +145,20 @@ const styles = StyleSheet.create({
   options: {
     width: '100%',
   },
+  iconContainer: {
+    width: 40,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  textContainer: {
+    flex: 1,
+  },
+  optionLabel: {
+    fontSize: 16,
+    lineHeight: 20,
+  },
   spacer: {
     flex: 1,
   },
@@ -133,11 +169,5 @@ const styles = StyleSheet.create({
     height: 56,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  optionText: {
-    fontSize: 16,
-    lineHeight: 20,
-    flex: 1,
-    textAlign: 'center',
   },
 });
