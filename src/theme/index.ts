@@ -34,6 +34,7 @@ export { typography } from './typography';
 export { spacing } from './spacing';
 export { radius } from './radius';
 export { createComponentTokens } from './components';
+export { decorativePalette } from './palette';
 export type { ColorTokens } from './colors';
 export type { Typography, TypographyVariant } from './typography';
 export type { Spacing } from './spacing';
