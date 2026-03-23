@@ -1,5 +1,6 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 import Svg, { Path } from 'react-native-svg';
 import { useTheme } from '@/theme';
 import { AppLogo } from '@/components/ui/app-logo';
@@ -7,6 +8,7 @@ import { AppLogo } from '@/components/ui/app-logo';
 export default function SignInScreen() {
   const { colors, typography, spacing, components } = useTheme();
   const insets = useSafeAreaInsets();
+  const router = useRouter();
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -26,6 +28,8 @@ export default function SignInScreen() {
 
       <View style={[styles.authButtons, { paddingHorizontal: spacing['2xl'], gap: spacing.md }]}>
         <Pressable
+          // TODO: Trigger Apple auth, then navigate on success
+          onPress={() => router.push('/(onboarding)/welcome')}
           style={({ pressed }) => [
             styles.button,
             {
@@ -41,6 +45,8 @@ export default function SignInScreen() {
         </Pressable>
 
         <Pressable
+          // TODO: Trigger Google auth, then navigate on success
+          onPress={() => router.push('/(onboarding)/welcome')}
           style={({ pressed }) => [
             styles.button,
             {
