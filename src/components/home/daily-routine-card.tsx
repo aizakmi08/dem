@@ -1,67 +1,61 @@
 import { Pressable, View, Text, StyleSheet } from 'react-native';
-import { useTheme, decorativePalette } from '@/theme';
+import { useTheme } from '@/theme';
 import type { Routine } from '@/content/types';
+import { CATEGORY_LABELS } from '@/content/categories';
+import { getExerciseById } from '@/content/exercises';
+import { getRoutineIcon } from '@/content/illustrations';
+import { ExerciseImage } from '@/components/ui/exercise-image';
+import { capitalize } from '@/lib/utils';
 
 interface DailyRoutineCardProps {
   routine: Routine;
+  index: number;
   onPress?: () => void;
 }
 
-export function DailyRoutineCard({ routine, onPress }: DailyRoutineCardProps) {
-  const { colors, typography } = useTheme();
-  const previewExercises = routine.exercises.slice(0, 6);
+export function DailyRoutineCard({ routine, index, onPress }: DailyRoutineCardProps) {
+  const { colors, typography, radius } = useTheme();
+  const catLabel = CATEGORY_LABELS[routine.category] ?? capitalize(routine.category);
+  const iconFilename = getRoutineIcon(routine.exercises, getExerciseById, index);
 
   return (
-    <Pressable onPress={onPress} style={styles.wrapper}>
-      <View style={[styles.card, { backgroundColor: colors.surface }]}>
-        <View style={styles.textSection}>
-          <Text style={[typography.overline, { color: colors.accent }]}>
-            {routine.durationMinutes} Minutes
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [
+        styles.card,
+        { backgroundColor: colors.surface, borderRadius: radius['2xl'], opacity: pressed ? 0.85 : 1 },
+      ]}
+    >
+      <View style={styles.row}>
+        <View style={styles.textCol}>
+          <Text style={[typography.tabLabel, { color: colors.accent }]}>
+            {routine.durationMinutes} MIN · {catLabel}
           </Text>
-          <Text style={[typography.heading, { color: colors.text }]}>
+          <Text style={[typography.bodyMedium, { color: colors.text }]} numberOfLines={1}>
             {routine.name}
           </Text>
+          <Text style={[typography.tabLabel, { color: colors.textSecondary }]}>
+            {routine.exercises.length} exercises · {capitalize(routine.difficulty)}
+          </Text>
         </View>
-        <View style={styles.exerciseRow}>
-          {previewExercises.map((exercise, index) => (
-            <View
-              key={exercise.exerciseId}
-              style={[
-                styles.exerciseCircle,
-                {
-                  backgroundColor:
-                    decorativePalette[index % decorativePalette.length],
-                },
-              ]}
-            />
-          ))}
-        </View>
+        {iconFilename && <ExerciseImage iconFilename={iconFilename} size={52} round />}
       </View>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  wrapper: {
-    paddingHorizontal: 24,
-    paddingTop: 24,
-  },
   card: {
-    borderRadius: 20,
-    padding: 24,
-    gap: 16,
+    width: 220,
+    padding: 14,
   },
-  textSection: {
-    gap: 4,
-  },
-  exerciseRow: {
+  row: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
+    alignItems: 'center',
     gap: 12,
   },
-  exerciseCircle: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+  textCol: {
+    flex: 1,
+    gap: 4,
   },
 });

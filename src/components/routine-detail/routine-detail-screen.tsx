@@ -21,8 +21,10 @@ interface RoutineDetailScreenProps {
 }
 
 interface ExerciseItem {
+  key: string;
   exerciseId: string;
   name: string;
+  iconFilename?: string;
 }
 
 export function RoutineDetailScreen({ routine }: RoutineDetailScreenProps) {
@@ -45,10 +47,15 @@ export function RoutineDetailScreen({ routine }: RoutineDetailScreenProps) {
     () =>
       [...routine.exercises]
         .sort((a, b) => a.order - b.order)
-        .map((re) => ({
-          exerciseId: re.exerciseId,
-          name: getExerciseById(re.exerciseId)?.name ?? re.exerciseId,
-        })),
+        .map((re) => {
+          const ex = getExerciseById(re.exerciseId);
+          return {
+            key: `${re.exerciseId}-${re.order}`,
+            exerciseId: re.exerciseId,
+            name: ex?.name ?? re.exerciseId,
+            iconFilename: ex?.iconFilename,
+          };
+        }),
     [routine.exercises]
   );
 
@@ -89,7 +96,7 @@ export function RoutineDetailScreen({ routine }: RoutineDetailScreenProps) {
     Alert.alert('Coming soon', 'Sharing is not yet implemented');
   }, []);
 
-  const keyExtractor = useCallback((item: ExerciseItem) => item.exerciseId, []);
+  const keyExtractor = useCallback((item: ExerciseItem) => item.key, []);
 
   const renderExercise = useCallback(
     ({ item, index }: { item: ExerciseItem; index: number }) => (
@@ -98,6 +105,7 @@ export function RoutineDetailScreen({ routine }: RoutineDetailScreenProps) {
         exerciseName={item.name}
         holdSeconds={holdTimes[item.exerciseId] ?? 30}
         colorIndex={index}
+        iconFilename={item.iconFilename}
         onPress={handleExercisePress}
         onDecrease={handleDecrease}
         onIncrease={handleIncrease}

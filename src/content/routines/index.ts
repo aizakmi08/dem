@@ -1,20 +1,20 @@
-import { Routine, RoutineCategory, BodyArea, Difficulty } from '../types';
-import { preBuiltRoutines } from './routines';
+import type { Routine, Category, BodyArea, Difficulty } from '../types';
+import { ALL_ROUTINES } from '../routine-data';
 
-export { preBuiltRoutines } from './routines';
+export { ALL_ROUTINES } from '../routine-data';
 
 export function getRoutineById(id: string): Routine | undefined {
-  return preBuiltRoutines.find((r) => r.id === id);
+  return ALL_ROUTINES.find((r) => r.id === id);
 }
 
-export function getRoutinesByCategory(category: RoutineCategory): Routine[] {
-  return preBuiltRoutines.filter((r) => r.categories.includes(category));
+export function getRoutinesByCategory(category: Category): Routine[] {
+  return ALL_ROUTINES.filter((r) => r.category === category);
 }
 
 export function getRoutinesByBodyArea(area: BodyArea): Routine[] {
-  return preBuiltRoutines.filter((r) => r.bodyAreas.includes(area));
+  return ALL_ROUTINES.filter((r) => r.bodyAreas.includes(area));
 }
 
 export function getRoutinesByDifficulty(difficulty: Difficulty): Routine[] {
-  return preBuiltRoutines.filter((r) => r.difficulty === difficulty);
+  return ALL_ROUTINES.filter((r) => r.difficulty === difficulty);
 }

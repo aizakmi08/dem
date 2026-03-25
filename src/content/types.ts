@@ -1,27 +1,57 @@
-export type Difficulty = 'beginner' | 'intermediate' | 'expert';
+export type ExerciseType =
+  | 'activation'
+  | 'advanced'
+  | 'balance'
+  | 'chair'
+  | 'dynamic'
+  | 'restorative'
+  | 'static'
+  | 'strength';
+
+export type RoutineType =
+  | 'stretching'
+  | 'dynamic'
+  | 'strength'
+  | 'deep-stretch'
+  | 'restorative';
+
+export type Category =
+  | 'energize'
+  | 'posture'
+  | 'relax-unwind'
+  | 'at-the-office'
+  | 'running'
+  | 'splits'
+  | 'pre-post-workout'
+  | 'strength'
+  | 'planks'
+  | 'targeted'
+  | 'body-part'
+  | 'pelvic-floor'
+  | 'beginner-series';
 
 export type BodyArea =
-  | 'neck'
-  | 'shoulders'
-  | 'upper-back'
-  | 'lower-back'
   | 'chest'
-  | 'hips'
+  | 'core'
+  | 'feet-and-ankles'
   | 'hamstrings'
+  | 'hips'
+  | 'lower-back'
+  | 'lower-body'
+  | 'neck'
+  | 'posture'
   | 'quadriceps'
-  | 'calves'
-  | 'full-body';
+  | 'shoulders'
+  | 'splits'
+  | 'upper-body';
 
-export type RoutineCategory = 'morning' | 'midday' | 'evening' | 'post-workout';
+export type Difficulty = 'beginner' | 'intermediate' | 'expert';
 
 export interface Exercise {
   id: string;
   name: string;
-  difficulty: Difficulty;
-  targetMuscles: string[];
-  bodyAreas: BodyArea[];
-  illustrationFile: string;
-  illustrationPrompt: string;
+  exerciseType: ExerciseType;
+  iconFilename: string;
   instructions: string[];
   tips: string[];
   modifications: {
@@ -29,12 +59,12 @@ export interface Exercise {
     harder: string;
   };
   benefits: string[];
-  defaultHoldSeconds: number;
 }
 
 export interface RoutineExercise {
   exerciseId: string;
   holdSeconds: number;
+  sides: 'none' | 'both';
   order: number;
 }
 
@@ -42,10 +72,11 @@ export interface Routine {
   id: string;
   name: string;
   description: string;
+  category: Category;
+  routineType: RoutineType;
   difficulty: Difficulty;
   durationMinutes: number;
   bodyAreas: BodyArea[];
-  categories: RoutineCategory[];
   exercises: RoutineExercise[];
   tags: string[];
 }

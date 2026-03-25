@@ -3,12 +3,14 @@ import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useTheme } from '@/theme';
 import { formatSeconds } from '@/lib/utils';
 import { decorativePalette } from '@/theme/palette';
+import { ExerciseImage } from '@/components/ui/exercise-image';
 
 interface ExerciseRowProps {
   exerciseId: string;
   exerciseName: string;
   holdSeconds: number;
   colorIndex: number;
+  iconFilename?: string;
   onPress: (exerciseId: string) => void;
   onDecrease: (exerciseId: string) => void;
   onIncrease: (exerciseId: string) => void;
@@ -19,6 +21,7 @@ export const ExerciseRow = memo(function ExerciseRow({
   exerciseName,
   holdSeconds,
   colorIndex,
+  iconFilename,
   onPress,
   onDecrease,
   onIncrease,
@@ -35,12 +38,16 @@ export const ExerciseRow = memo(function ExerciseRow({
         onPress={handlePress}
         style={({ pressed }) => [styles.rowLeft, { opacity: pressed ? 0.7 : 1 }]}
       >
-        <View
-          style={[
-            styles.circle,
-            { backgroundColor: decorativePalette[colorIndex % decorativePalette.length] },
-          ]}
-        />
+        {iconFilename ? (
+          <ExerciseImage iconFilename={iconFilename} size={44} round />
+        ) : (
+          <View
+            style={[
+              styles.circle,
+              { backgroundColor: decorativePalette[colorIndex % decorativePalette.length] },
+            ]}
+          />
+        )}
         <Text style={[typography.bodyMedium, styles.name, { color: colors.text }]} numberOfLines={2}>
           {exerciseName}
         </Text>

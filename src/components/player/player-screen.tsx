@@ -168,6 +168,7 @@ export function PlayerScreen({ routine }: PlayerScreenProps) {
             <ExerciseIllustration
               exerciseName={exercise.name}
               colorIndex={currentIndex}
+              iconFilename={exercise.iconFilename}
             />
           </CountdownRing>
         </View>
