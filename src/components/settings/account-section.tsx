@@ -1,15 +1,18 @@
-import { memo, useCallback } from 'react';
-import { View, Alert, ActivityIndicator, StyleSheet } from 'react-native';
+import { memo, useRef } from 'react';
+import { View, StyleSheet } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
-import { useRouter } from 'expo-router';
 import { useTheme } from '@/theme';
-import { db } from '@/lib/db';
-import { useOnboardingStore } from '@/stores/use-onboarding-store';
-import { useProfile } from '@/hooks/use-profile';
-import { useSignOut } from '@/hooks/use-sign-out';
 import { SectionHeader } from './section-header';
 import { SettingsRow } from './settings-row';
 import { ChevronRightIcon } from './chevron-right-icon';
+import {
+  RedoOnboardingDrawer,
+  type RedoOnboardingDrawerRef,
+} from './redo-onboarding-drawer';
+import {
+  SignOutDrawer,
+  type SignOutDrawerRef,
+} from './sign-out-drawer';
 
 function RefreshIcon({ color }: { color: string }) {
   return (
@@ -25,7 +28,7 @@ function RefreshIcon({ color }: { color: string }) {
   );
 }
 
-function SignOutIcon({ color }: { color: string }) {
+function SignOutRowIcon({ color }: { color: string }) {
   return (
     <Svg width={20} height={20} viewBox="0 0 24 24" fill="none">
       <Path
@@ -41,23 +44,8 @@ function SignOutIcon({ color }: { color: string }) {
 
 export const AccountSection = memo(function AccountSection() {
   const { colors } = useTheme();
-  const router = useRouter();
-  const { profile } = useProfile();
-  const { signOut, isSigningOut } = useSignOut();
-
-  const handleRedoOnboarding = useCallback(async () => {
-    try {
-      if (profile?.id) {
-        await db.transact(
-          db.tx.profiles[profile.id].update({ onboardingComplete: false }),
-        );
-      }
-      useOnboardingStore.getState().resetOnboarding();
-      router.replace('/(onboarding)/welcome');
-    } catch {
-      Alert.alert('Error', 'Could not reset onboarding. Please try again.');
-    }
-  }, [router, profile]);
+  const redoRef = useRef<RedoOnboardingDrawerRef>(null);
+  const signOutRef = useRef<SignOutDrawerRef>(null);
 
   return (
     <View style={styles.section}>
@@ -67,17 +55,18 @@ export const AccountSection = memo(function AccountSection() {
           icon={<RefreshIcon color={colors.text} />}
           label="Redo onboarding quiz"
           rightElement={<ChevronRightIcon color={colors.textSecondary} />}
-          onPress={handleRedoOnboarding}
+          onPress={() => redoRef.current?.present()}
         />
         <View style={[styles.divider, { backgroundColor: colors.border }]} />
         <SettingsRow
-          icon={<SignOutIcon color={isSigningOut ? colors.textSecondary : colors.accent} />}
+          icon={<SignOutRowIcon color={colors.accent} />}
           label="Sign out"
-          textColor={isSigningOut ? colors.textSecondary : colors.accent}
-          rightElement={isSigningOut ? <ActivityIndicator size="small" color={colors.textSecondary} /> : undefined}
-          onPress={isSigningOut ? undefined : signOut}
+          textColor={colors.accent}
+          onPress={() => signOutRef.current?.present()}
         />
       </View>
+      <RedoOnboardingDrawer ref={redoRef} />
+      <SignOutDrawer ref={signOutRef} />
     </View>
   );
 });

@@ -1,5 +1,6 @@
-import { memo, useCallback } from 'react';
-import { View, Linking, StyleSheet } from 'react-native';
+import { memo } from 'react';
+import { View, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
 import { useTheme } from '@/theme';
 import { SectionHeader } from './section-header';
 import { SettingsRow } from './settings-row';
@@ -7,10 +8,7 @@ import { ChevronRightIcon } from './chevron-right-icon';
 
 export const AboutSection = memo(function AboutSection() {
   const { colors } = useTheme();
-
-  const openURL = useCallback((url: string) => {
-    Linking.openURL(url);
-  }, []);
+  const router = useRouter();
 
   return (
     <View style={styles.section}>
@@ -19,13 +17,13 @@ export const AboutSection = memo(function AboutSection() {
         <SettingsRow
           label="Privacy policy"
           rightElement={<ChevronRightIcon color={colors.textSecondary} />}
-          onPress={() => openURL('https://dem.app/privacy')}
+          onPress={() => router.push('/settings/privacy-policy')}
         />
         <View style={[styles.divider, { backgroundColor: colors.border }]} />
         <SettingsRow
           label="Terms of service"
           rightElement={<ChevronRightIcon color={colors.textSecondary} />}
-          onPress={() => openURL('https://dem.app/terms')}
+          onPress={() => router.push('/settings/terms-of-service')}
         />
       </View>
     </View>

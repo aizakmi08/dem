@@ -25,6 +25,7 @@ export function useSignOut() {
         'Sign Out Failed',
         'Could not sign out. Please check your connection and try again.',
       );
+      throw new Error('sign-out-failed');
     } finally {
       setIsSigningOut(false);
     }
@@ -37,5 +38,5 @@ export function useSignOut() {
     ]);
   }, [performSignOut]);
 
-  return { signOut, isSigningOut };
+  return { signOut, performSignOut, isSigningOut };
 }
