@@ -56,44 +56,9 @@ function calculateStreaks(
   };
 }
 
-// ── Mock data matching the Paper design ──────────────────────────────
-// Set to false to use real InstantDB data
-const USE_MOCK_DATA = true;
-
-function getMockData(): ProgressData {
-  // Activity counts per day matching the design's 3 intensity levels:
-  //   1 session → #5C7A5C26, 2 sessions → #5C7A5C40, 3+ sessions → #5C7A5C66
-  const activityCounts = new Map<string, number>([
-    // March 2026 — matches Paper design exactly
-    ['2026-03-02', 1], ['2026-03-04', 2], ['2026-03-06', 1],
-    ['2026-03-08', 1], ['2026-03-09', 2], ['2026-03-10', 3],
-    ['2026-03-12', 1], ['2026-03-13', 2], ['2026-03-14', 1],
-    ['2026-03-15', 3], ['2026-03-16', 2], ['2026-03-17', 3],
-    ['2026-03-18', 2], ['2026-03-19', 3], ['2026-03-20', 2],
-    ['2026-03-21', 3],
-    // February 2026 — 12-day best streak (Feb 5–16)
-    ['2026-02-05', 1], ['2026-02-06', 2], ['2026-02-07', 1],
-    ['2026-02-08', 2], ['2026-02-09', 1], ['2026-02-10', 3],
-    ['2026-02-11', 1], ['2026-02-12', 2], ['2026-02-13', 1],
-    ['2026-02-14', 2], ['2026-02-15', 1], ['2026-02-16', 2],
-  ]);
-
-  return {
-    activityCounts,
-    currentStreak: 7,
-    bestStreak: 12,
-    totalSessions: 23,
-    totalMinutes: 142,
-    isLoading: false,
-  };
-}
-
 export function useProgressData(): ProgressData {
-  if (USE_MOCK_DATA) return getMockData();
-
   const { isLoading, data } = db.useQuery({ progressEntries: {} });
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   return useMemo(() => {
     const entries = data?.progressEntries ?? [];
 

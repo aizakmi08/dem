@@ -8,6 +8,7 @@ const _schema = i.schema({
 
     profiles: i.entity({
       userId: i.string().indexed(),
+      displayName: i.string().optional(),
       age: i.number().optional(),
       gender: i.string().optional(),
       experienceLevel: i.string().indexed(),

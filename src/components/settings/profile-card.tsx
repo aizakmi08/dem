@@ -1,18 +1,28 @@
 import { memo } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
 import Svg, { Path, Circle } from 'react-native-svg';
 import { useTheme } from '@/theme';
+import { useAuth } from '@/hooks/use-auth';
+import { useProfile } from '@/hooks/use-profile';
+import { ChevronRightIcon } from './chevron-right-icon';
 
-interface ProfileCardProps {
-  name: string;
-  email: string;
-}
-
-export const ProfileCard = memo(function ProfileCard({ name, email }: ProfileCardProps) {
+export const ProfileCard = memo(function ProfileCard() {
   const { colors, typography } = useTheme();
+  const router = useRouter();
+  const { user } = useAuth();
+  const { profile } = useProfile();
+
+  const email = user?.email ?? '';
+  const localPart = email.split('@')[0];
+  const derivedName = localPart ? localPart.charAt(0).toUpperCase() + localPart.slice(1) : '';
+  const name = profile?.displayName ?? derivedName;
 
   return (
-    <View style={styles.container}>
+    <Pressable
+      onPress={() => router.push('/profile/edit')}
+      style={({ pressed }) => [styles.container, { opacity: pressed ? 0.7 : 1 }]}
+    >
       <View style={[styles.avatar, { backgroundColor: colors.surface }]}>
         <Svg width={28} height={28} viewBox="0 0 24 24" fill="none">
           <Circle cx={12} cy={8} r={4} stroke={colors.textSecondary} strokeWidth={1.8} />
@@ -30,7 +40,8 @@ export const ProfileCard = memo(function ProfileCard({ name, email }: ProfileCar
           {email}
         </Text>
       </View>
-    </View>
+      <ChevronRightIcon color={colors.textSecondary} />
+    </Pressable>
   );
 });
 
@@ -50,6 +61,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   info: {
+    flex: 1,
     gap: 2,
   },
 });
