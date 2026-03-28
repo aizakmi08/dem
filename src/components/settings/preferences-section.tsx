@@ -12,6 +12,7 @@ import { ReminderDrawer } from './reminder-drawer';
 import type { ReminderSheetRef } from './reminder-drawer';
 import { TransitionTimeDrawer } from './transition-time-drawer';
 import type { TransitionTimeSheetRef } from './transition-time-drawer';
+import { NotificationPermissionBanner } from './notification-permission-banner';
 
 function BellIcon({ color }: { color: string }) {
   return (
@@ -88,6 +89,7 @@ export const PreferencesSection = memo(function PreferencesSection() {
           }
           onPress={openReminderDrawer}
         />
+        {profile?.reminderEnabled && <NotificationPermissionBanner />}
         <View style={[styles.divider, { backgroundColor: colors.border }]} />
         <SettingsRow
           icon={<SpeakerIcon color={colors.text} />}
