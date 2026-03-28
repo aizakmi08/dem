@@ -3,7 +3,8 @@ import { View, Switch, StyleSheet } from 'react-native';
 import Svg, { Path, Circle } from 'react-native-svg';
 import { useTheme } from '@/theme';
 import { useSettingsStore } from '@/stores/use-settings-store';
-import { useOnboardingStore } from '@/stores/use-onboarding-store';
+import { useProfile } from '@/hooks/use-profile';
+import { updateSoundEnabled } from '@/hooks/use-profile-sync';
 import { SectionHeader } from './section-header';
 import { SettingsRow } from './settings-row';
 
@@ -52,14 +53,13 @@ function ClockIcon({ color }: { color: string }) {
 
 export const PreferencesSection = memo(function PreferencesSection() {
   const { colors } = useTheme();
+  const { profile } = useProfile();
   const soundEnabled = useSettingsStore((s) => s.soundEnabled);
-  const setSoundEnabled = useSettingsStore((s) => s.setSoundEnabled);
   const transitionTime = useSettingsStore((s) => s.transitionTime);
-  const reminderHour = useOnboardingStore((s) => s.reminderHour);
-  const reminderMinute = useOnboardingStore((s) => s.reminderMinute);
-  const reminderPeriod = useOnboardingStore((s) => s.reminderPeriod);
 
-  const reminderTime = `${reminderHour}:${String(reminderMinute).padStart(2, '0')} ${reminderPeriod}`;
+  const reminderTime = profile?.reminderEnabled
+    ? (profile.reminderTime ?? '9:00 AM')
+    : 'Off';
 
   return (
     <View style={styles.section}>
@@ -77,7 +77,7 @@ export const PreferencesSection = memo(function PreferencesSection() {
           rightElement={
             <Switch
               value={soundEnabled}
-              onValueChange={setSoundEnabled}
+              onValueChange={(val) => { if (profile?.id) updateSoundEnabled(profile.id, val); }}
               trackColor={{ false: colors.border, true: colors.primary }}
               thumbColor={colors.white}
             />

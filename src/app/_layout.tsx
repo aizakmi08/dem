@@ -1,16 +1,18 @@
 import { useEffect, useMemo } from 'react';
-import { Appearance } from 'react-native';
+import { Appearance, useColorScheme } from 'react-native';
 import { Stack } from 'expo-router';
 import { ThemeProvider, DarkTheme, DefaultTheme } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import { useFonts, Nunito_400Regular, Nunito_600SemiBold, Nunito_700Bold, Nunito_800ExtraBold } from '@expo-google-fonts/nunito';
 import * as SplashScreen from 'expo-splash-screen';
 import { useSettingsStore } from '@/stores/use-settings-store';
+import { useProfileSync } from '@/hooks/use-profile-sync';
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const theme = useSettingsStore((s) => s.theme);
+  useProfileSync();
 
   const [fontsLoaded] = useFonts({
     Nunito_400Regular,
@@ -25,16 +27,22 @@ export default function RootLayout() {
     }
   }, [fontsLoaded]);
 
+  const systemScheme = useColorScheme();
+
   useEffect(() => {
-    Appearance.setColorScheme(theme === 'dark' ? 'dark' : 'light');
+    Appearance.setColorScheme(
+      theme === 'system' ? 'unspecified' : theme === 'dark' ? 'dark' : 'light',
+    );
   }, [theme]);
+
+  const isDark = theme === 'dark' || (theme === 'system' && systemScheme === 'dark');
 
   const navigationTheme = useMemo(
     () =>
-      theme === 'dark'
+      isDark
         ? { ...DarkTheme, colors: { ...DarkTheme.colors, background: '#1C1814' } }
         : { ...DefaultTheme, colors: { ...DefaultTheme.colors, background: '#FAF7F2' } },
-    [theme],
+    [isDark],
   );
 
   if (!fontsLoaded) {
@@ -44,7 +52,7 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={navigationTheme}>
       <Stack screenOptions={{ headerShown: false }} />
-      <StatusBar style={theme === 'dark' ? 'light' : 'dark'} />
+      <StatusBar style={theme === 'system' ? 'auto' : theme === 'dark' ? 'light' : 'dark'} />
     </ThemeProvider>
   );
 }

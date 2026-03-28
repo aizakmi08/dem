@@ -3,8 +3,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import Svg, { Circle, Path, Rect } from 'react-native-svg';
 import { useTheme } from '@/theme';
-import { BackButton } from '@/components/ui/back-button';
-
 export default function WelcomeScreen() {
   const { colors, typography, spacing } = useTheme();
   const insets = useSafeAreaInsets();
@@ -15,9 +13,7 @@ export default function WelcomeScreen() {
       style={[styles.container, { backgroundColor: colors.background }]}
       onPress={() => router.push('/(onboarding)/education')}
     >
-      <View style={[styles.header, { paddingTop: insets.top + spacing.lg, paddingHorizontal: spacing['2xl'] }]}>
-        <BackButton onPress={() => router.back()} />
-      </View>
+      <View style={[styles.header, { paddingTop: insets.top + spacing.lg, paddingHorizontal: spacing['2xl'] }]} />
 
       <View style={styles.spacer} />
 

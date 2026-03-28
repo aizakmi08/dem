@@ -1,14 +1,146 @@
-import { View, Text, Pressable, StyleSheet } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
-import Svg, { Path } from 'react-native-svg';
-import { useTheme } from '@/theme';
-import { AppLogo } from '@/components/ui/app-logo';
+import { AppLogo } from "@/components/ui/app-logo";
+import { useAuth } from "@/hooks/use-auth";
+import { db } from "@/lib/db";
+import { useTheme } from "@/theme";
+import NetInfo from "@react-native-community/netinfo";
+import {
+  GoogleSignin,
+  statusCodes,
+} from "@react-native-google-signin/google-signin";
+import * as AppleAuthentication from "expo-apple-authentication";
+import Constants from "expo-constants";
+import * as Haptics from "expo-haptics";
+import { useRouter } from "expo-router";
+import * as WebBrowser from "expo-web-browser";
+import { useCallback, useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Alert,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import "react-native-get-random-values";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Svg, { Path } from "react-native-svg";
+
+const TERMS_URL = "https://dem-app.com/terms";
+const PRIVACY_URL = "https://dem-app.com/privacy";
+
+const GOOGLE_IOS_CLIENT_ID =
+  (Constants.expoConfig?.extra?.googleIosClientId as string) ?? "";
+
+if (!GOOGLE_IOS_CLIENT_ID) {
+  console.warn(
+    "[SignIn] GOOGLE_IOS_CLIENT_ID is not set. Google Sign-In will not work.",
+  );
+} else {
+  GoogleSignin.configure({ iosClientId: GOOGLE_IOS_CLIENT_ID });
+}
+
+type LoadingProvider = "apple" | "google" | null;
+
+async function getNetworkAwareErrorMessage(provider: string): Promise<string> {
+  const state = await NetInfo.fetch();
+  if (!state.isConnected) {
+    return "No internet connection. Please check your network and try again.";
+  }
+  return `Could not sign in with ${provider}. Please try again.`;
+}
+
+function generateNonce(length = 32): string {
+  const charset =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const values = new Uint8Array(length);
+  crypto.getRandomValues(values);
+  return Array.from(values)
+    .map((v) => charset[v % charset.length])
+    .join("");
+}
+
+async function sha256(input: string): Promise<string> {
+  const data = new TextEncoder().encode(input);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  return Array.from(new Uint8Array(hashBuffer))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
 
 export default function SignInScreen() {
   const { colors, typography, spacing, components } = useTheme();
   const insets = useSafeAreaInsets();
+  const { user } = useAuth();
   const router = useRouter();
+  const [loadingProvider, setLoadingProvider] = useState<LoadingProvider>(null);
+
+  const loading = loadingProvider !== null;
+
+  useEffect(() => {
+    if (user) router.replace("/");
+  }, [user, router]);
+
+  const handleAppleSignIn = useCallback(async () => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setLoadingProvider("apple");
+    try {
+      const rawNonce = generateNonce();
+      const hashedNonce = await sha256(rawNonce);
+
+      const credential = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+        nonce: hashedNonce,
+      });
+
+      if (!credential.identityToken) {
+        throw new Error("No identity token returned");
+      }
+
+      await db.auth.signInWithIdToken({
+        clientName: "apple",
+        idToken: credential.identityToken,
+        nonce: rawNonce,
+      });
+    } catch (e: unknown) {
+      if ((e as { code?: string }).code === "ERR_REQUEST_CANCELED") return;
+      const message = await getNetworkAwareErrorMessage("Apple");
+      Alert.alert("Sign In Failed", message);
+    } finally {
+      setLoadingProvider(null);
+    }
+  }, []);
+
+  const handleGoogleSignIn = useCallback(async () => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setLoadingProvider("google");
+    try {
+      await GoogleSignin.hasPlayServices();
+      const response = await GoogleSignin.signIn();
+
+      if (response.type !== "success") return;
+
+      const idToken = response.data?.idToken;
+      if (!idToken) {
+        throw new Error("No ID token returned");
+      }
+
+      await db.auth.signInWithIdToken({
+        clientName: "google",
+        idToken,
+      });
+    } catch (e: unknown) {
+      const err = e as { code?: string };
+      if (err.code === statusCodes.SIGN_IN_CANCELLED) return;
+      if (err.code === statusCodes.IN_PROGRESS) return;
+      const message = await getNetworkAwareErrorMessage("Google");
+      Alert.alert("Sign In Failed", message);
+    } finally {
+      setLoadingProvider(null);
+    }
+  }, []);
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -18,7 +150,12 @@ export default function SignInScreen() {
         <AppLogo size={88} />
         <View style={[styles.logoText, { gap: spacing.sm }]}>
           <Text style={[typography.display, { color: colors.text }]}>Dem</Text>
-          <Text style={[typography.body, { color: colors.textSecondary, textAlign: 'center' }]}>
+          <Text
+            style={[
+              typography.body,
+              { color: colors.textSecondary, textAlign: "center" },
+            ]}
+          >
             Your daily stretching companion
           </Text>
         </View>
@@ -26,47 +163,96 @@ export default function SignInScreen() {
 
       <View style={styles.flexSpacer} />
 
-      <View style={[styles.authButtons, { paddingHorizontal: spacing['2xl'], gap: spacing.md }]}>
+      <View
+        style={[
+          styles.authButtons,
+          { paddingHorizontal: spacing["2xl"], gap: spacing.md },
+        ]}
+      >
         <Pressable
-          // TODO: Trigger Apple auth, then navigate on success
-          onPress={() => router.push('/(onboarding)/welcome')}
+          onPress={handleAppleSignIn}
+          disabled={loading}
           style={({ pressed }) => [
             styles.button,
             {
               ...components.button.dark,
-              opacity: pressed ? 0.85 : 1,
+              opacity: pressed || loading ? 0.85 : 1,
             },
           ]}
         >
-          <AppleIcon />
-          <Text style={[typography.button, { color: components.button.dark.color, textTransform: 'none' }]}>
-            Continue with Apple
-          </Text>
+          {loadingProvider === "apple" ? (
+            <ActivityIndicator color={components.button.dark.color} />
+          ) : (
+            <>
+              <AppleIcon />
+              <Text
+                style={[
+                  typography.button,
+                  {
+                    color: components.button.dark.color,
+                    textTransform: "none",
+                  },
+                ]}
+              >
+                Continue with Apple
+              </Text>
+            </>
+          )}
         </Pressable>
 
         <Pressable
-          // TODO: Trigger Google auth, then navigate on success
-          onPress={() => router.push('/(onboarding)/welcome')}
+          onPress={handleGoogleSignIn}
+          disabled={loading}
           style={({ pressed }) => [
             styles.button,
             {
               ...components.button.secondary,
-              opacity: pressed ? 0.85 : 1,
+              opacity: pressed || loading ? 0.85 : 1,
             },
           ]}
         >
-          <GoogleIcon />
-          <Text style={[typography.button, { color: components.button.secondary.color, textTransform: 'none' }]}>
-            Continue with Google
-          </Text>
+          {loadingProvider === "google" ? (
+            <ActivityIndicator color={components.button.secondary.color} />
+          ) : (
+            <>
+              <GoogleIcon />
+              <Text
+                style={[
+                  typography.button,
+                  {
+                    color: components.button.secondary.color,
+                    textTransform: "none",
+                  },
+                ]}
+              >
+                Continue with Google
+              </Text>
+            </>
+          )}
         </Pressable>
       </View>
 
-      <View style={[styles.terms, { paddingTop: spacing.xl, paddingBottom: insets.bottom + spacing.lg }]}>
+      <View
+        style={[
+          styles.terms,
+          { paddingTop: spacing.xl, paddingBottom: insets.bottom + spacing.lg },
+        ]}
+      >
         <Text style={[styles.termsText, { color: colors.textSecondary }]}>
-          By continuing, you agree to our{' '}
-          <Text style={styles.termsLink}>Terms of Service</Text> and{' '}
-          <Text style={styles.termsLink}>Privacy Policy</Text>
+          By continuing, you agree to our{" "}
+          <Text
+            style={styles.termsLink}
+            onPress={() => WebBrowser.openBrowserAsync(TERMS_URL)}
+          >
+            Terms of Service
+          </Text>{" "}
+          and{" "}
+          <Text
+            style={styles.termsLink}
+            onPress={() => WebBrowser.openBrowserAsync(PRIVACY_URL)}
+          >
+            Privacy Policy
+          </Text>
         </Text>
       </View>
     </View>
@@ -114,27 +300,27 @@ function GoogleIcon() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: "center",
   },
   topSpacer: {
     flex: 2.5,
   },
   logoArea: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   logoText: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   flexSpacer: {
     flex: 2,
   },
   authButtons: {
-    width: '100%',
+    width: "100%",
   },
   button: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     gap: 10,
   },
   terms: {
@@ -142,11 +328,11 @@ const styles = StyleSheet.create({
   },
   termsText: {
     fontSize: 12,
-    fontFamily: 'Nunito_400Regular',
+    fontFamily: "Nunito_400Regular",
     lineHeight: 18,
-    textAlign: 'center',
+    textAlign: "center",
   },
   termsLink: {
-    textDecorationLine: 'underline',
+    textDecorationLine: "underline",
   },
 });

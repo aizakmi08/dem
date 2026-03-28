@@ -32,6 +32,7 @@ interface OnboardingState {
   setStretchTime: (time: StretchTime) => void;
   setReminder: (hour: number, minute: number, period: Period) => void;
   skipReminder: () => void;
+  resetOnboarding: () => void;
 }
 
 export const useOnboardingStore = create<OnboardingState>()(
@@ -45,7 +46,7 @@ export const useOnboardingStore = create<OnboardingState>()(
       reminderEnabled: true,
       reminderHour: 9,
       reminderMinute: 0,
-      reminderPeriod: 'AM' as Period,
+      reminderPeriod: 'AM',
 
       setAge: (age) => set({ age }),
       setGender: (gender) => set({ gender }),
@@ -55,6 +56,18 @@ export const useOnboardingStore = create<OnboardingState>()(
       setReminder: (reminderHour, reminderMinute, reminderPeriod) =>
         set({ reminderHour, reminderMinute, reminderPeriod, reminderEnabled: true }),
       skipReminder: () => set({ reminderEnabled: false }),
+      resetOnboarding: () =>
+        set({
+          age: null,
+          gender: null,
+          experience: null,
+          goals: [],
+          stretchTime: null,
+          reminderEnabled: true,
+          reminderHour: 9,
+          reminderMinute: 0,
+          reminderPeriod: 'AM',
+        }),
     }),
     {
       name: 'dem-onboarding',
