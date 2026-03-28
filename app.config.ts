@@ -48,6 +48,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         color: "#5C7A5C",
       },
     ],
+    "expo-audio",
     "expo-apple-authentication",
     [
       "@react-native-google-signin/google-signin",

@@ -12,18 +12,20 @@ export function StartingCountdown({ onComplete }: StartingCountdownProps) {
   const { colors, typography } = useTheme();
   const [stepIndex, setStepIndex] = useState(0);
   const onCompleteRef = useRef(onComplete);
+  const didCompleteRef = useRef(false);
   onCompleteRef.current = onComplete;
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setStepIndex((prev) => prev + 1);
+      setStepIndex((prev) => Math.min(prev + 1, STEPS.length));
     }, 1000);
 
     return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
-    if (stepIndex >= STEPS.length) {
+    if (stepIndex >= STEPS.length && !didCompleteRef.current) {
+      didCompleteRef.current = true;
       onCompleteRef.current();
     }
   }, [stepIndex]);

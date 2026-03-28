@@ -27,17 +27,23 @@ export function usePlayerTimer({
   const progress = useSharedValue(1);
   const onCompleteRef = useRef(onComplete);
   const onBackgroundRef = useRef(onBackground);
+  const completionArmedRef = useRef(false);
+  const lastExerciseIndexRef = useRef(exerciseIndex);
 
   onCompleteRef.current = onComplete;
   onBackgroundRef.current = onBackground;
 
   const fireComplete = useCallback(() => {
+    if (!completionArmedRef.current) return;
+    completionArmedRef.current = false;
     onCompleteRef.current();
   }, []);
 
   const startTimer = useCallback(
     (fromProgress: number, dur: number) => {
-      const remainingMs = fromProgress * dur * 1000;
+      const remainingMs = Math.max(0, fromProgress * dur * 1000);
+      completionArmedRef.current = true;
+      cancelAnimation(progress);
       progress.value = withTiming(
         0,
         { duration: remainingMs, easing: Easing.linear },
@@ -52,39 +58,40 @@ export function usePlayerTimer({
   );
 
   const pauseTimer = useCallback(() => {
+    completionArmedRef.current = false;
     cancelAnimation(progress);
+  }, [progress]);
+
+  const resetProgress = useCallback(() => {
+    completionArmedRef.current = false;
+    cancelAnimation(progress);
+    progress.value = 1;
   }, [progress]);
 
   const resetTimer = useCallback(
     (newDuration?: number) => {
-      cancelAnimation(progress);
-      progress.value = 1;
+      resetProgress();
       if (newDuration !== undefined && status === 'playing') {
         startTimer(1, newDuration);
       }
     },
-    [progress, startTimer, status],
+    [resetProgress, startTimer, status],
   );
 
-  // Intentionally omits duration — timer resumes from current progress at current duration
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    if (status === 'playing') {
-      startTimer(progress.value, duration);
-    } else if (status === 'paused' || status === 'countdown') {
-      pauseTimer();
+    const didExerciseChange = lastExerciseIndexRef.current !== exerciseIndex;
+    if (didExerciseChange) {
+      lastExerciseIndexRef.current = exerciseIndex;
+      resetProgress();
     }
-  }, [status]);
 
-  // Intentionally omits status/duration — keyed on exercise transitions only
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    cancelAnimation(progress);
-    progress.value = 1;
     if (status === 'playing') {
-      startTimer(1, duration);
+      startTimer(didExerciseChange ? 1 : progress.value, duration);
+      return;
     }
-  }, [exerciseIndex]);
+
+    pauseTimer();
+  }, [duration, exerciseIndex, pauseTimer, progress, resetProgress, startTimer, status]);
 
   useEffect(() => {
     const sub = AppState.addEventListener('change', (nextState) => {

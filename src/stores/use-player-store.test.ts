@@ -6,6 +6,11 @@ jest.mock('@instantdb/react-native', () => ({
   id: jest.fn(),
 }));
 
+const mockGetState = jest.fn(() => ({ transitionTime: 0 }));
+jest.mock('./use-settings-store', () => ({
+  useSettingsStore: { getState: () => mockGetState() },
+}));
+
 const mockedId = jest.mocked(id);
 
 const exercises: RoutineExercise[] = [
@@ -18,6 +23,7 @@ describe('usePlayerStore', () => {
     usePlayerStore.getState().reset();
     mockedId.mockReset();
     mockedId.mockReturnValue('session-1');
+    mockGetState.mockReturnValue({ transitionTime: 0 });
   });
 
   it('initializes a session with sorted exercises and overridden hold times', () => {
@@ -95,9 +101,50 @@ describe('usePlayerStore', () => {
       routineId: '',
       exercises: [],
       currentIndex: 0,
+      transitionIndex: 0,
       status: 'idle',
       elapsedSeconds: 0,
       exercisesCompleted: 0,
+    });
+  });
+
+  it('enters transitioning status when transitionTime > 0', () => {
+    mockGetState.mockReturnValue({ transitionTime: 10 });
+    usePlayerStore.getState().initSession('routine-1', {}, exercises);
+
+    usePlayerStore.getState().advance();
+    expect(usePlayerStore.getState()).toMatchObject({
+      currentIndex: 0,
+      transitionIndex: 1,
+      status: 'transitioning',
+      exercisesCompleted: 1,
+    });
+  });
+
+  it('finishTransition moves to the next exercise', () => {
+    mockGetState.mockReturnValue({ transitionTime: 10 });
+    usePlayerStore.getState().initSession('routine-1', {}, exercises);
+
+    usePlayerStore.getState().advance();
+    usePlayerStore.getState().finishTransition();
+
+    expect(usePlayerStore.getState()).toMatchObject({
+      currentIndex: 1,
+      status: 'playing',
+    });
+  });
+
+  it('skips transition on last exercise and goes to complete', () => {
+    mockGetState.mockReturnValue({ transitionTime: 10 });
+    usePlayerStore.getState().initSession('routine-1', {}, exercises);
+
+    usePlayerStore.getState().advance();
+    usePlayerStore.getState().finishTransition();
+    usePlayerStore.getState().advance();
+
+    expect(usePlayerStore.getState()).toMatchObject({
+      status: 'complete',
+      exercisesCompleted: 2,
     });
   });
 });

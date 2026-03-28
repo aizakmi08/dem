@@ -8,6 +8,7 @@ import { getExerciseById } from '@/content/exercises';
 import type { Routine } from '@/content/types';
 import { capitalize } from '@/lib/utils';
 import { usePlayerStore } from '@/stores/use-player-store';
+import { useFavorites } from '@/hooks/use-favorites';
 import { RoutineDetailHeader } from './routine-detail-header';
 import { ExerciseRow } from './exercise-row';
 import { ExerciseInfoModal } from './exercise-info-modal';
@@ -35,6 +36,8 @@ export function RoutineDetailScreen({ routine }: RoutineDetailScreenProps) {
   const [holdTimes, setHoldTimes] = useState<Record<string, number>>(() =>
     Object.fromEntries(routine.exercises.map((e) => [e.exerciseId, e.holdSeconds]))
   );
+
+  const { isFavorite, toggleFavorite } = useFavorites();
 
   const [selectedExerciseId, setSelectedExerciseId] = useState<string | null>(null);
 
@@ -129,13 +132,14 @@ export function RoutineDetailScreen({ routine }: RoutineDetailScreenProps) {
           </View>
           <Pressable
             hitSlop={16}
-            onPress={() => Alert.alert('Coming soon', 'Favorites not yet implemented')}
+            onPress={() => toggleFavorite(routine.id)}
             style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
           >
             <Svg width={22} height={22} viewBox="0 0 22 22" fill="none">
               <Path
                 d="M11 18.5C11 18.5 2.75 13.2 2.75 7.15C2.75 4.95 4.58 3.3 6.88 3.3C8.43 3.3 9.9 4.13 11 5.5C12.1 4.13 13.57 3.3 15.12 3.3C17.42 3.3 19.25 4.95 19.25 7.15C19.25 13.2 11 18.5 11 18.5Z"
-                stroke={colors.textSecondary}
+                fill={isFavorite(routine.id) ? colors.accent : 'none'}
+                stroke={isFavorite(routine.id) ? colors.accent : colors.textSecondary}
                 strokeWidth={1.5}
                 strokeLinejoin="round"
               />
@@ -155,7 +159,7 @@ export function RoutineDetailScreen({ routine }: RoutineDetailScreenProps) {
         />
       </>
     ),
-    [routine, colors, typography]
+    [routine, colors, typography, isFavorite, toggleFavorite]
   );
 
   return (

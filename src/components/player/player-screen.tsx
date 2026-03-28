@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { View, Text, Pressable, Alert, StyleSheet } from 'react-native';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTheme } from '@/theme';
 import { getExerciseById } from '@/content/exercises';
@@ -14,8 +14,13 @@ import { ExerciseIllustration } from './exercise-illustration';
 import { TimerDisplay } from './timer-display';
 import { PlayerControls } from './player-controls';
 import { StartingCountdown } from './starting-countdown';
+import { TransitionRest } from './transition-rest';
 import { CompletionScreen } from './completion-screen';
 import { ExerciseInfoModal } from '@/components/routine-detail/exercise-info-modal';
+import { PlayerOptionsDrawer } from './player-options-drawer';
+import type { PlayerOptionsDrawerRef } from './player-options-drawer';
+import { useSettingsStore } from '@/stores/use-settings-store';
+import { useSounds } from '@/hooks/use-sounds';
 
 interface PlayerScreenProps {
   routine: Routine;
@@ -32,7 +37,12 @@ export function PlayerScreen({ routine }: PlayerScreenProps) {
   const status = usePlayerStore((s) => s.status);
   const exercisesCompleted = usePlayerStore((s) => s.exercisesCompleted);
   const elapsedSeconds = usePlayerStore((s) => s.elapsedSeconds);
-  const { setStatus, advance, retreat, tick, reset } = usePlayerStore.getState();
+  const transitionIndex = usePlayerStore((s) => s.transitionIndex);
+  const { setStatus, advance, finishTransition, retreat, tick, reset } =
+    usePlayerStore.getState();
+
+  const transitionTime = useSettingsStore((s) => s.transitionTime);
+  const { playCountdown, playTransition, playComplete } = useSounds();
 
   const currentExercise = exercises[currentIndex];
   const holdSeconds = currentExercise?.holdSeconds ?? 30;
@@ -42,11 +52,17 @@ export function PlayerScreen({ routine }: PlayerScreenProps) {
     [currentExercise],
   );
 
+  const nextExercise = useMemo(() => {
+    const next = exercises[transitionIndex];
+    return next ? getExerciseById(next.exerciseId) ?? null : null;
+  }, [exercises, transitionIndex]);
+
   const [displaySeconds, setDisplaySeconds] = useState(holdSeconds);
   const [showInfo, setShowInfo] = useState(false);
   const displaySecondsRef = useRef(displaySeconds);
   displaySecondsRef.current = displaySeconds;
   const wasPlayingRef = useRef(false);
+  const optionsDrawerRef = useRef<PlayerOptionsDrawerRef>(null);
   const ringScreenYRef = useRef(0);
   const ringHeightRef = useRef(0);
   const bodyOffsetRef = useRef(0);
@@ -61,6 +77,8 @@ export function PlayerScreen({ routine }: PlayerScreenProps) {
 
     const interval = setInterval(() => {
       if (displaySecondsRef.current <= 0) return;
+      const next = displaySecondsRef.current - 1;
+      if (next > 0 && next <= 3) playCountdown();
       setDisplaySeconds((prev) => prev - 1);
       tick();
     }, 1000);
@@ -70,7 +88,11 @@ export function PlayerScreen({ routine }: PlayerScreenProps) {
 
   const handleBackground = useCallback(() => {
     const currentStatus = usePlayerStore.getState().status;
-    if (currentStatus === 'playing' || currentStatus === 'countdown') {
+    if (
+      currentStatus === 'playing' ||
+      currentStatus === 'countdown' ||
+      currentStatus === 'transitioning'
+    ) {
       setStatus('paused');
     }
   }, [setStatus]);
@@ -111,7 +133,7 @@ export function PlayerScreen({ routine }: PlayerScreenProps) {
   }, [reset, router]);
 
   const handleMenu = useCallback(() => {
-    Alert.alert('Options', 'Player settings coming soon');
+    optionsDrawerRef.current?.present();
   }, []);
 
   const handleInfoOpen = useCallback(() => {
@@ -135,6 +157,11 @@ export function PlayerScreen({ routine }: PlayerScreenProps) {
     exercisesCompleted,
     exercisesTotal: exercises.length,
   });
+
+  useEffect(() => {
+    if (status === 'transitioning') playTransition();
+    if (status === 'complete') playComplete();
+  }, [status, playTransition, playComplete]);
 
   if (status === 'complete') {
     return (
@@ -226,11 +253,23 @@ export function PlayerScreen({ routine }: PlayerScreenProps) {
         </View>
       )}
 
+      {status === 'transitioning' && (
+        <TransitionRest
+          transitionTime={transitionTime}
+          nextExercise={nextExercise}
+          nextColorIndex={transitionIndex}
+          onComplete={finishTransition}
+          onSkip={finishTransition}
+        />
+      )}
+
       <ExerciseInfoModal
         exercise={showInfo ? exercise : null}
         visible={showInfo}
         onClose={handleInfoClose}
       />
+
+      <PlayerOptionsDrawer ref={optionsDrawerRef} />
     </View>
   );
 }

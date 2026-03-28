@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useColorScheme } from 'react-native';
 import { useSettingsStore } from '@/stores/use-settings-store';
 import { lightColors, darkColors, type ColorTokens } from './colors';
 import { typography, type Typography } from './typography';
@@ -15,10 +16,14 @@ export interface Theme {
 }
 
 export function useTheme(): Theme {
-  const theme = useSettingsStore((s) => s.theme);
+  const themeSetting = useSettingsStore((s) => s.theme);
+  const systemScheme = useColorScheme();
+  const isDark =
+    themeSetting === 'dark' ||
+    (themeSetting === 'system' && systemScheme === 'dark');
 
   return useMemo(() => {
-    const colors = theme === 'dark' ? darkColors : lightColors;
+    const colors = isDark ? darkColors : lightColors;
     return {
       colors,
       typography,
@@ -26,7 +31,7 @@ export function useTheme(): Theme {
       radius,
       components: createComponentTokens(colors, radius, spacing),
     };
-  }, [theme]);
+  }, [isDark]);
 }
 
 export { lightColors, darkColors } from './colors';

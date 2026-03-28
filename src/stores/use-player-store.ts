@@ -1,8 +1,15 @@
 import { id } from '@instantdb/react-native';
 import { create } from 'zustand';
 import type { RoutineExercise } from '@/content/types';
+import { useSettingsStore } from './use-settings-store';
 
-export type PlayerStatus = 'idle' | 'countdown' | 'playing' | 'paused' | 'complete';
+export type PlayerStatus =
+  | 'idle'
+  | 'countdown'
+  | 'playing'
+  | 'paused'
+  | 'complete'
+  | 'transitioning';
 
 interface PlayerExercise {
   exerciseId: string;
@@ -14,6 +21,7 @@ interface PlayerState {
   routineId: string;
   exercises: PlayerExercise[];
   currentIndex: number;
+  transitionIndex: number;
   status: PlayerStatus;
   elapsedSeconds: number;
   exercisesCompleted: number;
@@ -25,6 +33,7 @@ interface PlayerState {
   ) => void;
   setStatus: (status: PlayerStatus) => void;
   advance: () => void;
+  finishTransition: () => void;
   retreat: () => void;
   tick: () => void;
   reset: () => void;
@@ -35,6 +44,7 @@ export const usePlayerStore = create<PlayerState>()((set, get) => ({
   routineId: '',
   exercises: [],
   currentIndex: 0,
+  transitionIndex: 0,
   status: 'idle',
   elapsedSeconds: 0,
   exercisesCompleted: 0,
@@ -49,6 +59,7 @@ export const usePlayerStore = create<PlayerState>()((set, get) => ({
         holdSeconds: holdTimes[e.exerciseId] ?? e.holdSeconds,
       })),
       currentIndex: 0,
+      transitionIndex: 0,
       status: 'countdown',
       elapsedSeconds: 0,
       exercisesCompleted: 0,
@@ -60,18 +71,33 @@ export const usePlayerStore = create<PlayerState>()((set, get) => ({
   advance: () => {
     const { currentIndex, exercises, exercisesCompleted, status } = get();
     if (status === 'complete') return;
-    if (currentIndex + 1 >= exercises.length) {
+    const isLast = currentIndex + 1 >= exercises.length;
+    if (isLast) {
       set({
         status: 'complete',
         exercisesCompleted: exercisesCompleted + 1,
       });
     } else {
-      set({
-        currentIndex: currentIndex + 1,
-        status: 'playing',
-        exercisesCompleted: exercisesCompleted + 1,
-      });
+      const { transitionTime } = useSettingsStore.getState();
+      if (transitionTime > 0) {
+        set({
+          status: 'transitioning',
+          transitionIndex: currentIndex + 1,
+          exercisesCompleted: exercisesCompleted + 1,
+        });
+      } else {
+        set({
+          currentIndex: currentIndex + 1,
+          status: 'playing',
+          exercisesCompleted: exercisesCompleted + 1,
+        });
+      }
     }
+  },
+
+  finishTransition: () => {
+    const { transitionIndex } = get();
+    set({ currentIndex: transitionIndex, status: 'playing' });
   },
 
   retreat: () => {
@@ -93,6 +119,7 @@ export const usePlayerStore = create<PlayerState>()((set, get) => ({
       routineId: '',
       exercises: [],
       currentIndex: 0,
+      transitionIndex: 0,
       status: 'idle',
       elapsedSeconds: 0,
       exercisesCompleted: 0,
