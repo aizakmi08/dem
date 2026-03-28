@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import { db } from '@/lib/db';
 import { useProfile } from './use-profile';
-import { useNotifications, parseReminderTime } from './use-notifications';
+import { useNotifications, parseReminderTime, formatReminderTime } from './use-notifications';
 import { useSettingsStore, type Theme } from '@/stores/use-settings-store';
-import { useOnboardingStore } from '@/stores/use-onboarding-store';
+import { useOnboardingStore, type Period } from '@/stores/use-onboarding-store';
 
 export function useProfileSync() {
   const { profile } = useProfile();
@@ -75,6 +75,28 @@ export async function updateTransitionTime(
   await db.transact(
     db.tx.profiles[profileId].update({
       transitionTime: seconds,
+      updatedAt: Date.now(),
+    }),
+  );
+}
+
+export async function updateReminder(
+  profileId: string,
+  enabled: boolean,
+  hour: number,
+  minute: number,
+  period: Period,
+) {
+  const onboarding = useOnboardingStore.getState();
+  if (enabled) {
+    onboarding.setReminder(hour, minute, period);
+  } else {
+    onboarding.skipReminder();
+  }
+  await db.transact(
+    db.tx.profiles[profileId].update({
+      reminderEnabled: enabled,
+      reminderTime: enabled ? formatReminderTime(hour, minute, period) : null,
       updatedAt: Date.now(),
     }),
   );

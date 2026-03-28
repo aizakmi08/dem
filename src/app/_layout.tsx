@@ -3,6 +3,8 @@ import { Appearance, useColorScheme } from 'react-native';
 import { Stack } from 'expo-router';
 import { ThemeProvider, DarkTheme, DefaultTheme } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useFonts, Nunito_400Regular, Nunito_600SemiBold, Nunito_700Bold, Nunito_800ExtraBold } from '@expo-google-fonts/nunito';
 import * as SplashScreen from 'expo-splash-screen';
 import { useSettingsStore } from '@/stores/use-settings-store';
@@ -50,9 +52,13 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={navigationTheme}>
-      <Stack screenOptions={{ headerShown: false }} />
-      <StatusBar style={theme === 'system' ? 'auto' : theme === 'dark' ? 'light' : 'dark'} />
-    </ThemeProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <BottomSheetModalProvider>
+        <ThemeProvider value={navigationTheme}>
+          <Stack screenOptions={{ headerShown: false }} />
+          <StatusBar style={theme === 'system' ? 'auto' : theme === 'dark' ? 'light' : 'dark'} />
+        </ThemeProvider>
+      </BottomSheetModalProvider>
+    </GestureHandlerRootView>
   );
 }
