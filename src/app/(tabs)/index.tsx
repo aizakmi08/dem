@@ -110,9 +110,10 @@ export default function HomeScreen() {
       style={[styles.screen, { backgroundColor: colors.background }]}
       contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
       showsVerticalScrollIndicator={false}
+      contentInsetAdjustmentBehavior="never"
     >
       {/* ── Header ─────────────────────────────────────────────────────── */}
-      <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
+      <View style={[styles.header, { paddingTop: 12 }]}>
         <View>
           <Text style={[typography.overline, { color: colors.textSecondary }]}>{dateLabel}</Text>
           <Text style={[typography.displaySmall, { color: colors.text }]}>{greeting}</Text>

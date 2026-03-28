@@ -262,7 +262,7 @@ export default function ExploreScreen() {
   const listHeader = useMemo(
     () => (
       <>
-        <View style={[styles.titleRow, { paddingTop: insets.top + 16 }]}>
+        <View style={[styles.titleRow, { paddingTop: 16 }]}>
           <Text style={[typography.title, { color: colors.text }]}>Explore</Text>
           <Text style={[typography.tabLabel, { color: colors.textSecondary }]}>
             {hasActiveFilter ? `${resultCount} results` : `${ALL_ROUTINES.length} routines · ${ALL_EXERCISES.length} exercises`}
@@ -291,7 +291,7 @@ export default function ExploreScreen() {
       </>
     ),
     [
-      insets.top, colors, typography, searchQuery, selectedCategory,
+      colors, typography, searchQuery, selectedCategory,
       selectedBodyArea, selectedDuration, hasActiveFilter, resultCount,
       handleCategorySelect, clearBodyArea, clearDuration, FilterBadge,
     ],
@@ -307,6 +307,7 @@ export default function ExploreScreen() {
       style={[styles.screen, { backgroundColor: colors.background }]}
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled"
+      contentInsetAdjustmentBehavior="never"
     />
   );
 }

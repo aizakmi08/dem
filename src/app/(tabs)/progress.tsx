@@ -1,5 +1,4 @@
 import { View, ScrollView, StyleSheet } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@/theme';
 import { useProgressData } from '@/hooks/use-progress-data';
 import { StreakHero } from '@/components/progress/streak-hero';
@@ -7,7 +6,6 @@ import { ProgressCalendar } from '@/components/progress/progress-calendar';
 import { StatCard } from '@/components/progress/stat-card';
 
 export default function ProgressScreen() {
-  const insets = useSafeAreaInsets();
   const { colors } = useTheme();
   const { activityCounts, currentStreak, bestStreak, totalSessions, totalMinutes } =
     useProgressData();
@@ -15,8 +13,9 @@ export default function ProgressScreen() {
   return (
     <ScrollView
       style={[styles.screen, { backgroundColor: colors.background }]}
-      contentContainerStyle={{ paddingTop: insets.top, paddingBottom: 24 }}
+      contentContainerStyle={{ paddingBottom: 24 }}
       showsVerticalScrollIndicator={false}
+      contentInsetAdjustmentBehavior="never"
     >
       <StreakHero count={currentStreak} />
       <ProgressCalendar activityCounts={activityCounts} />
