@@ -17,6 +17,7 @@ import {
   type DurationRange,
   DURATION_LABELS,
 } from '@/stores/use-explore-filter-store';
+import { useProgressData } from '@/hooks/use-progress-data';
 import { StreakBadge } from '@/components/home/streak-badge';
 import { DailyRoutineCard } from '@/components/home/daily-routine-card';
 import { CategoryCard } from '@/components/home/category-card';
@@ -78,6 +79,7 @@ export default function HomeScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { colors, typography, components, radius } = useTheme();
+  const { currentStreak } = useProgressData();
 
   const goToRoutine = useCallback(
     (id: string) => router.push(`/routine/${id}`),
@@ -119,7 +121,7 @@ export default function HomeScreen() {
           <Text style={[typography.displaySmall, { color: colors.text }]}>{greeting}</Text>
         </View>
         <View style={styles.headerRight}>
-          <StreakBadge count={7} />
+          <StreakBadge count={currentStreak} />
           <View style={[styles.avatar, { backgroundColor: colors.border }]}>
             <Svg width={18} height={18} viewBox="0 0 18 18" fill="none">
               <Circle cx="9" cy="7" r="3" stroke={colors.textSecondary} strokeWidth={1.5} />

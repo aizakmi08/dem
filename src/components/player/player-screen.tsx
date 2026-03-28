@@ -6,6 +6,7 @@ import { getExerciseById } from '@/content/exercises';
 import type { Routine } from '@/content/types';
 import { usePlayerStore } from '@/stores/use-player-store';
 import { usePlayerTimer } from '@/hooks/use-player-timer';
+import { useSaveProgress } from '@/hooks/use-save-progress';
 import { PlayerHeader } from './player-header';
 import { ProgressBar } from './progress-bar';
 import { CountdownRing } from './countdown-ring';
@@ -25,9 +26,12 @@ export function PlayerScreen({ routine }: PlayerScreenProps) {
   const { colors, typography } = useTheme();
 
   const exercises = usePlayerStore((s) => s.exercises);
+  const sessionId = usePlayerStore((s) => s.sessionId);
+  const routineId = usePlayerStore((s) => s.routineId);
   const currentIndex = usePlayerStore((s) => s.currentIndex);
   const status = usePlayerStore((s) => s.status);
   const exercisesCompleted = usePlayerStore((s) => s.exercisesCompleted);
+  const elapsedSeconds = usePlayerStore((s) => s.elapsedSeconds);
   const { setStatus, advance, retreat, tick, reset } = usePlayerStore.getState();
 
   const currentExercise = exercises[currentIndex];
@@ -123,8 +127,16 @@ export function PlayerScreen({ routine }: PlayerScreenProps) {
     }
   }, [setStatus]);
 
+  useSaveProgress({
+    sessionId,
+    routineId,
+    status,
+    durationSeconds: elapsedSeconds,
+    exercisesCompleted,
+    exercisesTotal: exercises.length,
+  });
+
   if (status === 'complete') {
-    const { elapsedSeconds } = usePlayerStore.getState();
     return (
       <CompletionScreen
         durationSeconds={elapsedSeconds}

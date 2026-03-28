@@ -1,3 +1,4 @@
+import { id } from '@instantdb/react-native';
 import { create } from 'zustand';
 import type { RoutineExercise } from '@/content/types';
 
@@ -9,6 +10,7 @@ interface PlayerExercise {
 }
 
 interface PlayerState {
+  sessionId: string;
   routineId: string;
   exercises: PlayerExercise[];
   currentIndex: number;
@@ -29,6 +31,7 @@ interface PlayerState {
 }
 
 export const usePlayerStore = create<PlayerState>()((set, get) => ({
+  sessionId: '',
   routineId: '',
   exercises: [],
   currentIndex: 0,
@@ -39,6 +42,7 @@ export const usePlayerStore = create<PlayerState>()((set, get) => ({
   initSession: (routineId, holdTimes, exercises) => {
     const sorted = [...exercises].sort((a, b) => a.order - b.order);
     set({
+      sessionId: id(),
       routineId,
       exercises: sorted.map((e) => ({
         exerciseId: e.exerciseId,
@@ -85,6 +89,7 @@ export const usePlayerStore = create<PlayerState>()((set, get) => ({
 
   reset: () =>
     set({
+      sessionId: '',
       routineId: '',
       exercises: [],
       currentIndex: 0,
