@@ -6,6 +6,7 @@ import { cancelReminder } from '@/hooks/use-notifications';
 import { useOnboardingStore } from '@/stores/use-onboarding-store';
 import { useSettingsStore } from '@/stores/use-settings-store';
 import { usePlayerStore } from '@/stores/use-player-store';
+import { useSubscriptionStore } from '@/stores/use-subscription-store';
 
 export function useSignOut() {
   const router = useRouter();
@@ -19,6 +20,7 @@ export function useSignOut() {
       useOnboardingStore.getState().resetOnboarding();
       useSettingsStore.getState().resetSettings();
       usePlayerStore.getState().reset();
+      useSubscriptionStore.getState().resetSubscription();
       router.replace('/(auth)/sign-in');
     } catch {
       Alert.alert(
