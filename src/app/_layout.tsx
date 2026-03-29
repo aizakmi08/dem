@@ -9,6 +9,7 @@ import { useFonts, Nunito_400Regular, Nunito_600SemiBold, Nunito_700Bold, Nunito
 import * as SplashScreen from 'expo-splash-screen';
 import { useSettingsStore } from '@/stores/use-settings-store';
 import { useProfileSync } from '@/hooks/use-profile-sync';
+import { configureRevenueCat } from '@/lib/revenue-cat';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -28,6 +29,10 @@ export default function RootLayout() {
       SplashScreen.hideAsync();
     }
   }, [fontsLoaded]);
+
+  useEffect(() => {
+    configureRevenueCat();
+  }, []);
 
   const systemScheme = useColorScheme();
 
@@ -55,7 +60,9 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <BottomSheetModalProvider>
         <ThemeProvider value={navigationTheme}>
-          <Stack screenOptions={{ headerShown: false }} />
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="paywall" options={{ animation: 'fade', gestureEnabled: false }} />
+          </Stack>
           <StatusBar style={theme === 'system' ? 'auto' : theme === 'dark' ? 'light' : 'dark'} />
         </ThemeProvider>
       </BottomSheetModalProvider>

@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
 import { Svg, Path, Rect } from 'react-native-svg';
+import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/theme';
 import type { PlayerStatus } from '@/stores/use-player-store';
 
@@ -23,7 +24,10 @@ export const PlayerControls = memo(function PlayerControls({
   return (
     <View style={styles.container}>
       <Pressable
-        onPress={onPrev}
+        onPress={() => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          onPrev();
+        }}
         style={({ pressed }) => [
           styles.secondaryButton,
           { backgroundColor: colors.background, opacity: pressed ? 0.7 : 1 },
@@ -36,7 +40,10 @@ export const PlayerControls = memo(function PlayerControls({
       </Pressable>
 
       <Pressable
-        onPress={onPlayPause}
+        onPress={() => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          onPlayPause();
+        }}
         style={({ pressed }) => [
           styles.primaryButton,
           { backgroundColor: colors.primary, opacity: pressed ? 0.85 : 1 },
@@ -55,7 +62,10 @@ export const PlayerControls = memo(function PlayerControls({
       </Pressable>
 
       <Pressable
-        onPress={onNext}
+        onPress={() => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          onNext();
+        }}
         style={({ pressed }) => [
           styles.secondaryButton,
           { backgroundColor: colors.background, opacity: pressed ? 0.7 : 1 },

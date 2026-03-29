@@ -2,6 +2,7 @@ import { useState, useCallback, useRef } from 'react';
 import { View, Text, Pressable, Alert, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/theme';
 import { BackButton } from '@/components/ui/back-button';
 import { TimeScrollPicker } from '@/components/onboarding/time-scroll-picker';
@@ -66,12 +67,14 @@ export default function ReminderScreen() {
   );
 
   const handleNext = useCallback(async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     useOnboardingStore.getState().setReminder(hour, minute, period);
     await scheduleReminder(to24Hour(hour, period), minute);
     saveProfile(true, hour, minute, period);
   }, [hour, minute, period, saveProfile]);
 
   const handleSkip = useCallback(() => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     useOnboardingStore.getState().skipReminder();
     saveProfile(false, 9, 0, 'AM');
   }, [saveProfile]);

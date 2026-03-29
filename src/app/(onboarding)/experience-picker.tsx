@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import Svg, { Circle } from 'react-native-svg';
+import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/theme';
 import { BackButton } from '@/components/ui/back-button';
 import { SelectOption } from '@/components/onboarding/select-option';
@@ -48,6 +49,7 @@ export default function ExperiencePickerScreen() {
 
   const handleNext = useCallback(() => {
     if (!selected) return;
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     useOnboardingStore.getState().setExperience(selected);
     router.push('/(onboarding)/goals-picker');
   }, [selected, router]);
@@ -82,7 +84,10 @@ export default function ExperiencePickerScreen() {
           <SelectOption
             key={option.value}
             isSelected={selected === option.value}
-            onPress={() => setSelected(option.value)}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              setSelected(option.value);
+            }}
             height={72}
             borderRadius={radius.xl}
             colors={colors}

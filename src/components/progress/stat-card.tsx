@@ -10,7 +10,7 @@ export function StatCard({ value, label }: StatCardProps) {
   const { colors, typography, radius } = useTheme();
 
   return (
-    <View style={[styles.card, { backgroundColor: colors.surface, borderRadius: radius.xl }]}>
+    <View style={[styles.card, { backgroundColor: colors.surface, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.border }]}>
       <Text style={[styles.value, typography.heading, { color: colors.text }]}>
         {value}
       </Text>

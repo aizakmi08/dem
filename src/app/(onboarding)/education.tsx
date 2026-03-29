@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/theme';
 import { BackButton } from '@/components/ui/back-button';
 import { PageDots } from '@/components/onboarding/page-dots';
@@ -61,12 +62,13 @@ export default function EducationScreen() {
   );
 
   const handleTap = useCallback(() => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     if (currentIndex < SLIDES.length - 1) {
       scrollRef.current?.scrollTo({ x: (currentIndex + 1) * width, animated: true });
     } else {
       router.push('/(onboarding)/age-picker');
     }
-  }, [currentIndex, width]);
+  }, [currentIndex, width, router]);
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>

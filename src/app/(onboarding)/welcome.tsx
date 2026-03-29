@@ -2,6 +2,7 @@ import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import Svg, { Circle, Path, Rect } from 'react-native-svg';
+import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/theme';
 export default function WelcomeScreen() {
   const { colors, typography, spacing } = useTheme();
@@ -11,13 +12,16 @@ export default function WelcomeScreen() {
   return (
     <Pressable
       style={[styles.container, { backgroundColor: colors.background }]}
-      onPress={() => router.push('/(onboarding)/education')}
+      onPress={() => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        router.push('/(onboarding)/education');
+      }}
     >
       <View style={[styles.header, { paddingTop: insets.top + spacing.lg, paddingHorizontal: spacing['2xl'] }]} />
 
       <View style={styles.spacer} />
 
-      <View style={styles.illustrationCircle}>
+      <View style={[styles.illustrationCircle, { backgroundColor: colors.surface }]}>
         <Svg width={100} height={80} viewBox="0 0 100 80" fill="none">
           <Rect x={10} y={58} width={80} height={6} rx={3} fill={colors.accent} opacity={0.6} />
           <Circle cx={30} cy={38} r={6} fill={colors.text} />
@@ -64,7 +68,6 @@ const styles = StyleSheet.create({
     width: 160,
     height: 160,
     borderRadius: 80,
-    backgroundColor: '#E8DDD0',
     alignItems: 'center',
     justifyContent: 'center',
   },

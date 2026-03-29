@@ -43,7 +43,7 @@ export function BodyAreaCard({ area, onPress }: BodyAreaCardProps) {
       onPress={onPress}
       style={({ pressed }) => [
         styles.card,
-        { backgroundColor: colors.surface, borderRadius: radius.xl, opacity: pressed ? 0.8 : 1 },
+        { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderRadius: radius.xl, opacity: pressed ? 0.8 : 1 },
       ]}
     >
       <View style={styles.topRow}>

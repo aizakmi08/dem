@@ -6,6 +6,7 @@ import Animated, {
   withTiming,
   interpolateColor,
 } from 'react-native-reanimated';
+import * as Haptics from 'expo-haptics';
 import type { ColorTokens } from '@/theme';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -30,6 +31,11 @@ export function SelectOption({
   const progress = useSharedValue(0);
   const accentWithAlpha = useMemo(() => colors.accent + '14', [colors.accent]);
 
+  const handlePress = () => {
+    Haptics.selectionAsync();
+    onPress();
+  };
+
   useEffect(() => {
     progress.value = withTiming(isSelected ? 1 : 0, { duration: 200 });
   }, [isSelected, progress]);
@@ -49,7 +55,7 @@ export function SelectOption({
 
   return (
     <AnimatedPressable
-      onPress={onPress}
+      onPress={handlePress}
       style={[
         styles.option,
         { height, borderRadius },

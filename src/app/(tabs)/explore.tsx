@@ -197,7 +197,7 @@ export default function ExploreScreen() {
       }
       if (item.type === 'exercise') {
         return (
-          <View style={[styles.exerciseRow, { backgroundColor: colors.surface, borderRadius: radius.xl }]}>
+          <View style={[styles.exerciseRow, { backgroundColor: colors.surface, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.border }]}>
             <ExerciseImage iconFilename={item.iconFilename} size={40} round />
             <View style={styles.itemContent}>
               <Text style={[typography.bodyMedium, { color: colors.text }]} numberOfLines={1}>{item.exerciseName}</Text>
@@ -212,7 +212,7 @@ export default function ExploreScreen() {
           onPress={() => goToRoutine(routine.id)}
           style={({ pressed }) => [
             styles.routineRow,
-            { backgroundColor: colors.surface, borderRadius: radius.xl, opacity: pressed ? 0.85 : 1 },
+            { backgroundColor: colors.surface, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.border, opacity: pressed ? 0.85 : 1 },
           ]}
         >
           {firstIcon ? (

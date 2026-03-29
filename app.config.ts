@@ -65,5 +65,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   extra: {
     instantDbAppId: process.env.INSTANT_APP_ID ?? "",
     googleIosClientId: process.env.GOOGLE_IOS_CLIENT_ID ?? "",
+    revenueCatApiKeyIos: process.env.REVENUECAT_API_KEY_IOS ?? "",
+    revenueCatApiKeyAndroid: process.env.REVENUECAT_API_KEY_ANDROID ?? "",
+    eas: {
+      projectId: "99932df4-2afe-4aff-8254-3c4993d87709",
+    },
   },
 });

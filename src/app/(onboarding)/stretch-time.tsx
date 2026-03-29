@@ -1,9 +1,10 @@
 import { useState, useCallback } from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Text, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import Svg, { Path, Circle } from 'react-native-svg';
+import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/theme';
 import { BackButton } from '@/components/ui/back-button';
 import { SelectOption } from '@/components/onboarding/select-option';
@@ -86,6 +87,7 @@ export default function StretchTimeScreen() {
 
   const handleNext = useCallback(() => {
     if (!selected) return;
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     useOnboardingStore.getState().setStretchTime(selected);
     router.push('/(onboarding)/reminder');
   }, [selected, router]);
@@ -110,11 +112,13 @@ export default function StretchTimeScreen() {
         </Text>
       </View>
 
-      <View
-        style={[
+      <ScrollView
+        style={styles.scrollArea}
+        contentContainerStyle={[
           styles.options,
-          { paddingTop: spacing['3xl'], paddingHorizontal: spacing['2xl'], gap: spacing.md },
+          { paddingTop: spacing['3xl'], paddingHorizontal: spacing['2xl'], paddingBottom: spacing.lg, gap: spacing.md },
         ]}
+        showsVerticalScrollIndicator={false}
       >
         {TIME_OPTIONS.map((option) => {
           const IconComponent = ICON_MAP[option.value];
@@ -122,7 +126,10 @@ export default function StretchTimeScreen() {
             <SelectOption
               key={option.value}
               isSelected={selected === option.value}
-              onPress={() => setSelected(option.value)}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                setSelected(option.value);
+              }}
               height={56}
               borderRadius={radius.xl}
               colors={colors}
@@ -144,9 +151,7 @@ export default function StretchTimeScreen() {
             </SelectOption>
           );
         })}
-      </View>
-
-      <View style={styles.spacer} />
+      </ScrollView>
 
       {selected ? (
         <Animated.View
@@ -186,6 +191,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 48,
   },
+  scrollArea: {
+    flex: 1,
+  },
   options: {
     width: '100%',
   },
@@ -197,9 +205,6 @@ const styles = StyleSheet.create({
   optionLabel: {
     fontSize: 15,
     lineHeight: 18,
-  },
-  spacer: {
-    flex: 1,
   },
   buttonSection: {
     width: '100%',

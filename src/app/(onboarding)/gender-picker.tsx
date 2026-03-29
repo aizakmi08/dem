@@ -3,6 +3,7 @@ import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import Animated, { FadeInDown } from 'react-native-reanimated';
+import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/theme';
 import { BackButton } from '@/components/ui/back-button';
 import { SelectOption } from '@/components/onboarding/select-option';
@@ -22,6 +23,7 @@ export default function GenderPickerScreen() {
 
   const handleNext = useCallback(() => {
     if (!selectedGender) return;
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     useOnboardingStore.getState().setGender(selectedGender);
     router.push('/(onboarding)/experience-picker');
   }, [selectedGender, router]);
@@ -60,7 +62,10 @@ export default function GenderPickerScreen() {
           <SelectOption
             key={option.value}
             isSelected={selectedGender === option.value}
-            onPress={() => setSelectedGender(option.value)}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              setSelectedGender(option.value);
+            }}
             height={60}
             borderRadius={radius.xl}
             colors={colors}

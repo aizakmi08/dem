@@ -1,5 +1,6 @@
 import { memo, useCallback } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/theme';
 import { formatSeconds } from '@/lib/utils';
 import { decorativePalette } from '@/theme/palette';
@@ -29,8 +30,14 @@ export const ExerciseRow = memo(function ExerciseRow({
   const { colors, typography } = useTheme();
 
   const handlePress = useCallback(() => onPress(exerciseId), [exerciseId, onPress]);
-  const handleDecrease = useCallback(() => onDecrease(exerciseId), [exerciseId, onDecrease]);
-  const handleIncrease = useCallback(() => onIncrease(exerciseId), [exerciseId, onIncrease]);
+  const handleDecrease = useCallback(() => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    onDecrease(exerciseId);
+  }, [exerciseId, onDecrease]);
+  const handleIncrease = useCallback(() => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    onIncrease(exerciseId);
+  }, [exerciseId, onIncrease]);
 
   return (
     <View style={styles.row}>

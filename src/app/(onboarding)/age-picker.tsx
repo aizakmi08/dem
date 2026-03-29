@@ -2,6 +2,8 @@ import { useState, useCallback } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import Animated, { FadeInDown } from 'react-native-reanimated';
+import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/theme';
 import { BackButton } from '@/components/ui/back-button';
 import { AgeScrollPicker } from '@/components/onboarding/age-scroll-picker';
@@ -14,6 +16,7 @@ export default function AgePickerScreen() {
   const [selectedAge, setSelectedAge] = useState(23);
 
   const handleNext = useCallback(() => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     useOnboardingStore.getState().setAge(selectedAge);
     router.push('/(onboarding)/gender-picker');
   }, [selectedAge, router]);
@@ -42,15 +45,16 @@ export default function AgePickerScreen() {
 
       <AgeScrollPicker defaultAge={23} onAgeChange={setSelectedAge} />
 
-      <View style={{ paddingTop: spacing['3xl'], paddingHorizontal: spacing['3xl'] }}>
-        <Text style={[typography.body, { color: colors.text }]}>
-          Tip: This will be used to optimize your exercises and routines.
+      <View style={{ paddingTop: spacing['3xl'], paddingHorizontal: spacing['2xl'] }}>
+        <Text style={[typography.bodySmall, { color: colors.textSecondary, textAlign: 'center' }]}>
+          This helps us optimize your exercises and routines.
         </Text>
       </View>
 
       <View style={styles.spacer} />
 
-      <View
+      <Animated.View
+        entering={FadeInDown.duration(300)}
         style={[
           styles.buttonSection,
           { paddingHorizontal: spacing['2xl'], paddingBottom: insets.bottom + spacing['2xl'] },
@@ -69,7 +73,7 @@ export default function AgePickerScreen() {
         >
           <Text style={[typography.button, { color: colors.white }]}>Next</Text>
         </Pressable>
-      </View>
+      </Animated.View>
     </View>
   );
 }

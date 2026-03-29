@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { id } from '@instantdb/react-native';
 import { db } from '@/lib/db';
 import { useAuth } from '@/hooks/use-auth';
+import { useSubscriptionStore } from '@/stores/use-subscription-store';
 import type { PlayerStatus } from '@/stores/use-player-store';
 
 interface UseSaveProgressOptions {
@@ -51,6 +52,7 @@ export function useSaveProgress({
     )
       .then(() => {
         savedSessionIdRef.current = sessionId;
+        useSubscriptionStore.getState().incrementSessions();
       })
       .catch((err) => {
         console.warn('[useSaveProgress] failed to save progress entry', err);

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, memo } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
+import Animated, { SlideInDown } from 'react-native-reanimated';
 import { useTheme } from '@/theme';
 import { ExerciseIllustration } from './exercise-illustration';
 import type { Exercise } from '@/content/types';
@@ -46,13 +47,13 @@ export const TransitionRest = memo(function TransitionRest({
   }, [seconds]);
 
   return (
-    <View style={styles.overlay}>
+    <Animated.View entering={SlideInDown.duration(300)} style={[styles.overlay, { backgroundColor: colors.background }]}>
       <View style={styles.content}>
-        <Text style={[typography.overline, styles.restLabel, { color: colors.textSecondary }]}>
+        <Text style={[typography.overline, styles.restLabel, { color: colors.text }]}>
           Rest
         </Text>
 
-        <Text style={[styles.countdown, { color: colors.accent }]}>
+        <Text style={[styles.countdown, { color: colors.text }]}>
           {seconds}
         </Text>
 
@@ -68,7 +69,7 @@ export const TransitionRest = memo(function TransitionRest({
             <Text style={[typography.overline, { color: colors.textSecondary }]}>
               Next up
             </Text>
-            <Text style={[typography.heading, { color: colors.white }]}>
+            <Text style={[typography.heading, { color: colors.text }]}>
               {nextExercise.name}
             </Text>
           </View>
@@ -78,7 +79,7 @@ export const TransitionRest = memo(function TransitionRest({
           onPress={onSkip}
           style={({ pressed }) => [
             styles.skipButton,
-            { borderColor: colors.border, opacity: pressed ? 0.7 : 1 },
+            { backgroundColor: colors.primary, borderColor: colors.primary, opacity: pressed ? 0.7 : 1 },
           ]}
         >
           <Text style={[typography.bodyMedium, { color: colors.white }]}>
@@ -86,14 +87,13 @@ export const TransitionRest = memo(function TransitionRest({
           </Text>
         </Pressable>
       </View>
-    </View>
+    </Animated.View>
   );
 });
 
 const styles = StyleSheet.create({
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.85)',
     zIndex: 20,
     justifyContent: 'center',
     alignItems: 'center',

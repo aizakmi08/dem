@@ -16,6 +16,7 @@ import { PlayerControls } from './player-controls';
 import { StartingCountdown } from './starting-countdown';
 import { TransitionRest } from './transition-rest';
 import { CompletionScreen } from './completion-screen';
+import { PauseOverlay } from './pause-overlay';
 import { ExerciseInfoModal } from '@/components/routine-detail/exercise-info-modal';
 import { PlayerOptionsDrawer } from './player-options-drawer';
 import type { PlayerOptionsDrawerRef } from './player-options-drawer';
@@ -42,7 +43,7 @@ export function PlayerScreen({ routine }: PlayerScreenProps) {
     usePlayerStore.getState();
 
   const transitionTime = useSettingsStore((s) => s.transitionTime);
-  const { playCountdown, playTransition, playComplete } = useSounds();
+  const { playCountdown, playTransition, playComplete, playRestEnd } = useSounds();
 
   const currentExercise = exercises[currentIndex];
   const holdSeconds = currentExercise?.holdSeconds ?? 30;
@@ -160,8 +161,9 @@ export function PlayerScreen({ routine }: PlayerScreenProps) {
 
   useEffect(() => {
     if (status === 'transitioning') playTransition();
+    if (status === 'playing' && currentIndex > 0) playRestEnd();
     if (status === 'complete') playComplete();
-  }, [status, playTransition, playComplete]);
+  }, [status, playTransition, playComplete, playRestEnd, currentIndex]);
 
   if (status === 'complete') {
     return (
@@ -239,6 +241,13 @@ export function PlayerScreen({ routine }: PlayerScreenProps) {
         onPlayPause={handlePlayPause}
         onNext={advance}
       />
+
+      {status === 'paused' && (
+        <PauseOverlay
+          onResume={() => usePlayerStore.getState().setStatus('playing')}
+          onEnd={() => { usePlayerStore.getState().reset(); router.back(); }}
+        />
+      )}
 
       {status === 'countdown' && (
         <View style={styles.countdownOverlay} pointerEvents="none">

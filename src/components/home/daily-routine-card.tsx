@@ -23,7 +23,7 @@ export function DailyRoutineCard({ routine, index, onPress }: DailyRoutineCardPr
       onPress={onPress}
       style={({ pressed }) => [
         styles.card,
-        { backgroundColor: colors.surface, borderRadius: radius['2xl'], opacity: pressed ? 0.85 : 1 },
+        { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderRadius: radius['2xl'], opacity: pressed ? 0.85 : 1 },
       ]}
     >
       <View style={styles.row}>

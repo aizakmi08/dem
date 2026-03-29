@@ -5,37 +5,49 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
+import * as Haptics from 'expo-haptics';
 import { useTheme, lightColors } from '@/theme';
 import { useSettingsStore, type Theme } from '@/stores/use-settings-store';
 import { useProfile } from '@/hooks/use-profile';
 import { updateTheme } from '@/hooks/use-profile-sync';
 
-const SEGMENT_WIDTH = 62;
-const SEGMENT_HEIGHT = 32;
+const SEGMENT_WIDTH = 80;
+const SEGMENT_HEIGHT = 34;
 const PADDING = 3;
 
 const ACTIVE_TEXT_COLOR = lightColors.text;
 
-const POSITION_MAP: Record<Theme, number> = { light: 0, dark: 1, system: 2 };
+const THEMES: { value: Theme; label: string }[] = [
+  { value: 'light', label: 'Light' },
+  { value: 'dark', label: 'Dark' },
+];
+
+const POSITION_MAP: Record<string, number> = { light: 0, dark: 1 };
 
 export const ThemeSwitcher = memo(function ThemeSwitcher() {
   const { colors } = useTheme();
   const { profile } = useProfile();
   const theme = useSettingsStore((s) => s.theme);
 
-  const position = useSharedValue(POSITION_MAP[theme]);
+  // Treat "system" as light for the toggle position
+  const activeTheme = theme === 'system' ? 'light' : theme;
+  const position = useSharedValue(POSITION_MAP[activeTheme] ?? 0);
 
   useEffect(() => {
-    position.value = POSITION_MAP[theme];
-  }, [theme]); // position is a stable shared value ref
+    position.value = POSITION_MAP[activeTheme] ?? 0;
+  }, [activeTheme]);
 
   const indicatorStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: withTiming(position.value * SEGMENT_WIDTH, { duration: 250 }) }],
+    transform: [{ translateX: withTiming(position.value * SEGMENT_WIDTH, { duration: 200 }) }],
   }));
 
   const handleSelect = useCallback(
     (value: Theme) => {
-      position.value = POSITION_MAP[value];
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      // Update store immediately for instant UI response
+      useSettingsStore.getState().setTheme(value);
+      position.value = POSITION_MAP[value] ?? 0;
+      // Write to DB in background (don't await)
       if (profile?.id) {
         updateTheme(profile.id, value);
       }
@@ -48,21 +60,18 @@ export const ThemeSwitcher = memo(function ThemeSwitcher() {
       <Animated.View
         style={[styles.indicator, { backgroundColor: colors.white }, indicatorStyle]}
       />
-      <Pressable onPress={() => handleSelect('light')} style={styles.segment}>
-        <Text style={[styles.label, { color: theme === 'light' ? ACTIVE_TEXT_COLOR : colors.text }]}>
-          Light
-        </Text>
-      </Pressable>
-      <Pressable onPress={() => handleSelect('dark')} style={styles.segment}>
-        <Text style={[styles.label, { color: theme === 'dark' ? ACTIVE_TEXT_COLOR : colors.text }]}>
-          Dark
-        </Text>
-      </Pressable>
-      <Pressable onPress={() => handleSelect('system')} style={styles.segment}>
-        <Text style={[styles.label, { color: theme === 'system' ? ACTIVE_TEXT_COLOR : colors.text }]}>
-          Auto
-        </Text>
-      </Pressable>
+      {THEMES.map((t) => (
+        <Pressable key={t.value} onPress={() => handleSelect(t.value)} style={styles.segment}>
+          <Text
+            style={[
+              styles.label,
+              { color: activeTheme === t.value ? ACTIVE_TEXT_COLOR : colors.textSecondary },
+            ]}
+          >
+            {t.label}
+          </Text>
+        </Pressable>
+      ))}
     </View>
   );
 });
@@ -90,6 +99,6 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    fontWeight: '500',
+    fontFamily: 'Nunito_600SemiBold',
   },
 });

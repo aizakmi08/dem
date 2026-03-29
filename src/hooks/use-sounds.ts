@@ -12,6 +12,12 @@ export function useSounds() {
   const completePlayer = useAudioPlayer(
     require('../../assets/sounds/complete.wav'),
   );
+  const startPlayer = useAudioPlayer(
+    require('../../assets/sounds/start.wav'),
+  );
+  const restEndPlayer = useAudioPlayer(
+    require('../../assets/sounds/rest-end.wav'),
+  );
 
   const playCountdown = useCallback(() => {
     if (!useSettingsStore.getState().soundEnabled) return;
@@ -31,5 +37,17 @@ export function useSounds() {
     completePlayer.play();
   }, [completePlayer]);
 
-  return { playCountdown, playTransition, playComplete };
+  const playStart = useCallback(() => {
+    if (!useSettingsStore.getState().soundEnabled) return;
+    startPlayer.seekTo(0);
+    startPlayer.play();
+  }, [startPlayer]);
+
+  const playRestEnd = useCallback(() => {
+    if (!useSettingsStore.getState().soundEnabled) return;
+    restEndPlayer.seekTo(0);
+    restEndPlayer.play();
+  }, [restEndPlayer]);
+
+  return { playCountdown, playTransition, playComplete, playStart, playRestEnd };
 }

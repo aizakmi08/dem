@@ -47,9 +47,8 @@ export function useProfileSync() {
   return { profile };
 }
 
-export async function updateTheme(profileId: string, theme: Theme) {
-  useSettingsStore.getState().setTheme(theme);
-  await db.transact(
+export function updateTheme(profileId: string, theme: Theme) {
+  db.transact(
     db.tx.profiles[profileId].update({ theme, updatedAt: Date.now() }),
   );
 }

@@ -3,6 +3,7 @@ import { View, Text, Pressable, StyleSheet, ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import Animated, { FadeInDown } from 'react-native-reanimated';
+import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/theme';
 import { BackButton } from '@/components/ui/back-button';
 import { SelectOption } from '@/components/onboarding/select-option';
@@ -26,6 +27,7 @@ export default function GoalsPickerScreen() {
   const [selectedGoals, setSelectedGoals] = useState<GoalKey[]>([]);
 
   const toggleGoal = useCallback((key: GoalKey) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setSelectedGoals((prev) =>
       prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
     );
@@ -33,6 +35,7 @@ export default function GoalsPickerScreen() {
 
   const handleNext = useCallback(() => {
     if (selectedGoals.length === 0) return;
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     useOnboardingStore.getState().setGoals(selectedGoals);
     router.push('/(onboarding)/stretch-time');
   }, [selectedGoals, router]);

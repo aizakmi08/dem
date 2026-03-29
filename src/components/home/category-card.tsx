@@ -35,6 +35,8 @@ export function CategoryCard({ category, index, onPress }: CategoryCardProps) {
         styles.card,
         {
           backgroundColor: colors.surface,
+          borderWidth: 1,
+          borderColor: colors.border,
           borderRadius: radius.xl,
           opacity: pressed ? 0.8 : 1,
         },
