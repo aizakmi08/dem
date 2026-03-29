@@ -146,9 +146,12 @@ export default function PaywallScreen() {
 
     const pkg = selectedPlan === 'yearly' ? packages.yearly : packages.monthly;
     if (!pkg) {
-      // No RC packages available (dev mode or no API key) — grant access locally
       useSubscriptionStore.getState().setPremium(selectedPlan);
-      router.replace('/(tabs)');
+      if (router.canGoBack()) {
+        router.back();
+      } else {
+        router.replace('/(tabs)');
+      }
       return;
     }
 
@@ -159,7 +162,11 @@ export default function PaywallScreen() {
     if (success) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       useSubscriptionStore.getState().setPremium(selectedPlan);
-      router.replace('/(tabs)');
+      if (router.canGoBack()) {
+        router.back();
+      } else {
+        router.replace('/(tabs)');
+      }
     }
   }, [selectedPlan, packages, router]);
 
@@ -172,7 +179,11 @@ export default function PaywallScreen() {
     if (success) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       useSubscriptionStore.getState().setPremium(null);
-      router.replace('/(tabs)');
+      if (router.canGoBack()) {
+        router.back();
+      } else {
+        router.replace('/(tabs)');
+      }
     } else {
       Alert.alert('No purchases found', 'We couldn\'t find any active subscriptions to restore.');
     }
