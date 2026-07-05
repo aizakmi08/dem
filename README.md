@@ -1,5 +1,7 @@
 # Dem
 
+[![CI](https://github.com/aizakmi08/dem/actions/workflows/ci.yml/badge.svg)](https://github.com/aizakmi08/dem/actions/workflows/ci.yml)
+
 Dem is a full-featured daily stretching app built with Expo and React Native. It is designed around short guided routines, habit formation, progress tracking, and a warm mobile interface.
 
 ## Product Scope
@@ -70,6 +72,12 @@ npm test
 ```
 
 The repo includes focused tests around the player timer, progress data, save-progress behavior, completion guards, and player store state.
+
+## Quality Signals
+
+- CI runs linting and the Jest suite on pushes and pull requests.
+- `CONTRIBUTING.md` documents the expected validation path for mobile, content, and state changes.
+- `SECURITY.md` captures credential and privacy expectations around auth, sync, and subscriptions.
 
 ## Status
 
