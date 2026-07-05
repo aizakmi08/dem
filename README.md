@@ -75,7 +75,7 @@ The repo includes focused tests around the player timer, progress data, save-pro
 
 ## Quality Signals
 
-- CI runs linting and the Jest suite on pushes and pull requests.
+- CI runs linting and focused Jest coverage for timer, progress, save-progress, and player-store behavior.
 - `CONTRIBUTING.md` documents the expected validation path for mobile, content, and state changes.
 - `SECURITY.md` captures credential and privacy expectations around auth, sync, and subscriptions.
 
